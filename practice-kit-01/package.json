@@ -3,9 +3,12 @@
   "private": true,
   "packageManager": "pnpm@10.34.6",
   "scripts": {
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "db:generate": "pnpm --filter @kit/api db:generate",
+    "db:migrate": "pnpm --filter @kit/api db:migrate",
+    "db:seed": "pnpm --filter @kit/api db:seed"
   },
   "devDependencies": {
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   }
 }
