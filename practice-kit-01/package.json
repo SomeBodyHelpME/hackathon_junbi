@@ -1,0 +1,11 @@
+{
+  "name": "practice-kit-01",
+  "private": true,
+  "packageManager": "pnpm@10.34.6",
+  "scripts": {
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
