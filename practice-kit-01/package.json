@@ -3,12 +3,14 @@
   "private": true,
   "packageManager": "pnpm@10.34.6",
   "scripts": {
+    "dev": "pnpm -r --parallel --filter @kit/api --filter @kit/web dev",
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm --filter @kit/api db:generate",
     "db:migrate": "pnpm --filter @kit/api db:migrate",
     "db:seed": "pnpm --filter @kit/api db:seed"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "typescript": "^5.9.3"
   }
 }
