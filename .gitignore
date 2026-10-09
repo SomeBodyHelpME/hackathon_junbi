@@ -1,0 +1,31 @@
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Build outputs
+.next/
+dist/
+out/
+*.tsbuildinfo
+
+# Test artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.features-gen/
+coverage/
+
+# Logs
+*.log
+logs/
