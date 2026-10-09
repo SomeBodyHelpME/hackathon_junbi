@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from "fastify";
+import type { FastifyRequest } from "fastify";
 import { AppError } from "./errors.js";
 
 export const SESSION_COOKIE = "uid";
@@ -12,7 +12,7 @@ export function getSessionUserId(req: FastifyRequest): string | null {
 }
 
 // 로그인이 필요한 라우트의 preHandler. 비로그인이면 401.
-export async function requireUser(req: FastifyRequest, _reply: FastifyReply) {
+export async function requireUser(req: FastifyRequest) {
   const userId = getSessionUserId(req);
   if (!userId) {
     throw new AppError(401, "UNAUTHORIZED", "로그인이 필요합니다");

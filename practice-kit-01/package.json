@@ -7,10 +7,17 @@
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm --filter @kit/api db:generate",
     "db:migrate": "pnpm --filter @kit/api db:migrate",
-    "db:seed": "pnpm --filter @kit/api db:seed"
+    "db:seed": "pnpm --filter @kit/api db:seed",
+    "lint": "eslint .",
+    "test:unit": "pnpm -r test:unit"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
-    "typescript": "^5.9.3"
-  }
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.4.0",
+    "globals": "^17.13.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.1"
+  },
+  "type": "module"
 }
