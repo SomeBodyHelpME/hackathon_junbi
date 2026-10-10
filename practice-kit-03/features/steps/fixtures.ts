@@ -45,3 +45,42 @@ export function userIdOf(name: string): string {
   if (!id) throw new Error(`시드에 없는 사용자: ${name}`);
   return id;
 }
+
+// 화면은 Asia/Seoul 기준(PRD 7장).
+// "2099-12-01" + "10:00" → "2099-12-01T10:00:00+09:00"
+export function toSeoulIso(date: string, time: string): string {
+  return `${date}T${time}:00+09:00`;
+}
+
+// "2099-12-01 10:00" → "2099-12-01T10:00:00+09:00"
+export function labelToIso(label: string): string {
+  const [date, time] = label.trim().split(" ");
+  return toSeoulIso(date, time);
+}
+
+const labelFmt = new Intl.DateTimeFormat("sv-SE", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
+// ISO → "2099-12-01 10:00"
+export function isoToLabel(iso: string): string {
+  return labelFmt.format(new Date(iso));
+}
+
+export function pollOf(ctx: ScenarioContext, title: string) {
+  const poll = ctx.polls.get(title);
+  if (!poll) throw new Error(`사전 조건에서 "${title}" 투표를 만들지 않았습니다`);
+  return poll;
+}
+
+export function candidateIdOf(ctx: ScenarioContext, pollTitle: string, label: string): string {
+  const id = pollOf(ctx, pollTitle).candidates.get(label);
+  if (!id) throw new Error(`"${pollTitle}" 투표에 "${label}" 후보가 없습니다`);
+  return id;
+}
