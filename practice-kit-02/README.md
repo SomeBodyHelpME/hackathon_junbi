@@ -1,3 +1,78 @@
+# 점심 메뉴 주문 취합 서비스 (practice-kit-02)
+
+팀원이 점심 주문 모집을 열고, 각자 주문하고, 개설자가 마감해 메뉴별 수량·금액을 취합하는 서비스 (요구사항: `docs/prd.md`, 작업 단위: `issues.md`).
+
+- 기술 스택: kit-01과 동일 (pnpm workspace · Next.js 3000 · Fastify 4000 · PostgreSQL + Drizzle · Zod · playwright-bdd · Vitest)
+- 최종 검증: commit `9f6ebc0`, 2026-10-10 21:01 KST, **모든 항목 PASS**
+
+## 실행 방법
+
+```bash
+corepack enable                          # PC당 1회 (Docker Desktop 실행 필요)
+pnpm install
+pnpm exec playwright install chromium    # 새 PC에서만
+docker compose up -d --wait
+pnpm db:migrate && pnpm db:seed
+pnpm dev                                 # http://localhost:3000
+
+# 검증 (pnpm dev는 끈 상태에서)
+pnpm lint && pnpm typecheck && pnpm test:unit
+pnpm test:int                            # 실제 DB 필요, 모집·주문 데이터를 지움
+pnpm test:bdd
+
+# 결과 문서 재생성
+PLAYWRIGHT_JSON_OUTPUT_NAME=docs/test-logs/bdd-results.json pnpm test:bdd --reporter=list,json
+node scripts/e2e-report.mjs $(git rev-parse --short HEAD)
+
+docker compose down                      # 다음 키트로 넘어가기 전 (포트 3000/4000/5432 해제)
+```
+
+`Timed out waiting ... webServer` → DB 꺼짐(`docker compose ps`) · `reset 실패` → `pnpm dev` 종료 후 재실행
+
+## 최종 검증 결과
+
+commit `9f6ebc0` · 2026-10-10 21:01:21 ~ 21:01:43 KST · DB 볼륨 삭제 후 마이그레이션·시드부터 실행 · 로그 `docs/test-logs/`
+
+| 명령 | 결과 | 로그 |
+|---|---|---|
+| `pnpm lint` | PASS | `docs/test-logs/lint.log` |
+| `pnpm typecheck` | PASS | `docs/test-logs/typecheck.log` |
+| `pnpm test:unit` | PASS — 48 passed / 0 failed (contracts 26, api 22) | `docs/test-logs/test-unit.log` |
+| `pnpm test:int` | PASS — 16 passed / 0 failed | `docs/test-logs/test-int.log` |
+| `pnpm test:bdd` | PASS — 15 passed / 0 failed / 0 skipped / 0 flaky | `docs/test-logs/test-bdd.log`, `docs/e2e-test.md` |
+
+## 증거 인덱스 (REQ → BDD → Issue → 테스트 → 결과)
+
+| REQ | BDD (시나리오 / AC) | Issue | 단위·통합 테스트 | 결과 |
+|---|---|---|---|---|
+| REQ-00 환경·공통부 | `features/smoke.feature` (1) | `issues.md` [REQ-00] | `apps/api/src/app.test.ts` · `packages/contracts/src/index.test.ts` | BDD 1/1 PASS · unit PASS |
+| REQ-01 모집 개설·주문 | `features/order-create.feature` (5, Outline 2 포함) / AC-01~04 | `issues.md` [REQ-01] | `packages/contracts/src/order.test.ts` · `apps/api/src/modules/order/routes.test.ts` · `order.int.test.ts` (1인 1주문 동시 10건 → 1건) | BDD 5/5 PASS · unit PASS · int PASS |
+| REQ-02 마감·취합 | `features/order-close.feature` (4) / AC-05~08 | `issues.md` [REQ-02] | `close.int.test.ts` (개설자 403, 재마감 409, 마감·주문 경쟁, DB 가격 집계, 클라이언트 가격 무시) | BDD 4/4 PASS · int PASS |
+| REQ-03 주문 취소(보안) | `features/order-cancel.feature` (5) / AC-09~13 | `issues.md` [REQ-03] | `routes.test.ts` (DELETE 401·404) · `cancel.int.test.ts` (본인 204, 타인 403, 마감 409, 위조 쿠키 401) · `docs/security-compliance.md` | BDD 5/5 PASS · unit PASS · int PASS |
+
+### 설계 결정 기록
+
+| 결정 | 이유 | 위치 |
+|---|---|---|
+| 1인 1주문 = `(round_id, user_id)` 유니크 인덱스 | 조회 후 저장은 동시 요청에 뚫림. 동시 10건 → 1건 성공 확인 | `apps/api/drizzle/0001_*.sql` |
+| 주문·취소 시 모집 행 `FOR SHARE` 잠금 | 마감(UPDATE)과 경쟁할 때 "열림 확인 → 마감 → 저장" 방지. 잠금 제거 시 테스트가 201로 FAIL하는 것 확인 | `order/repository.ts` |
+| 금액은 서버가 DB 가격으로 계산, 취합은 DB 집계 | 클라이언트가 가격을 조작해도 무시 | `CreateOrderRequest`, `summarize` |
+| 권한(403)·상태(409) 검사는 API 핸들러에서, 403 → 409 순서 | 버튼 숨김만으로는 방어 불가 (본인 검사 제거 시 AC-11 FAIL 확인) | `order/routes.ts`, `cancelOrder` |
+
+### 리뷰 체크포인트 근거
+
+| 체크포인트 | 근거 |
+|---|---|
+| `.feature` 확정 이후 미변경 | `git diff cfd3f26 -- practice-kit-02/features/order-*.feature` 0줄 |
+| 1인 1주문 DB 제약 | `orders_round_user_unique` · int "같은 사용자가 동시에 10번 주문해도 1건만 생성된다" |
+| 금액 서버 계산 | int "클라이언트가 가격·금액을 보내도 무시하고 DB 가격을 쓴다" |
+| 403/409가 API 핸들러에 있음 | `order/routes.ts` `/close`, `app.delete("/api/orders/:id")` |
+| `/api/test/reset` 운영 미등록 | unit "NODE_ENV=test가 아니면 라우트가 없다" |
+| 고정 대기 미사용 | `grep -rn waitForTimeout features/` 0건 |
+| Step 코드 수정 이력 | 확정 이후 Step 수정 없음 (프롬프트 2 커밋 `f47c1d2` 이후 변경 0) |
+
+---
+
 # 점심 메뉴 주문 취합 모의 개발 키트 (kit-02)
 
 ## 파일 구성

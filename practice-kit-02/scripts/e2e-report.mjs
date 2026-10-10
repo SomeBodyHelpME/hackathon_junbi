@@ -15,9 +15,13 @@ const fmt = new Intl.DateTimeFormat("sv-SE", {
 });
 const kst = (iso) => `${fmt.format(new Date(iso))} KST`;
 
-function* specs(suite) {
-  for (const spec of suite.specs ?? []) yield { file: suite.file, spec };
-  for (const child of suite.suites ?? []) yield* specs(child);
+// Scenario Outline의 예시는 "Example #N"으로만 나오므로 상위 suite(Outline 제목)를 붙인다.
+function* specs(suite, parentTitle = "") {
+  for (const spec of suite.specs ?? []) {
+    const title = /^Example #\d+$/.test(spec.title) ? `${parentTitle} (${spec.title})` : spec.title;
+    yield { file: suite.file, spec: { ...spec, title } };
+  }
+  for (const child of suite.suites ?? []) yield* specs(child, child.title);
 }
 
 const STATUS = { passed: "PASS", failed: "FAIL", timedOut: "FAIL", skipped: "SKIP", interrupted: "FAIL" };
