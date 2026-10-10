@@ -103,3 +103,8 @@ export const PollDetail = Poll.extend({
   myChoices: z.array(z.string()),
 });
 export type PollDetail = z.infer<typeof PollDetail>;
+
+export const ConfirmRequest = z.object({
+  candidateId: z.uuid({ error: "확정할 후보를 선택하세요" }),
+});
+export type ConfirmRequest = z.infer<typeof ConfirmRequest>;

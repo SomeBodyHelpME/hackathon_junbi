@@ -88,14 +88,24 @@ export async function findPollDetail(id: string, viewerId: string): Promise<Poll
 }
 
 export class InvalidCandidateError extends Error {}
+export class PollConfirmedError extends Error {}
 
 // 응답 저장/대체.
+// 0) 투표 행을 FOR SHARE로 잠그고 상태 확인 → 확정(UPDATE)은 진행 중인 응답이 끝날 때까지 기다리고,
+//    확정이 먼저 커밋되면 이후 응답은 409. "투표 중 확인 → 확정 → 저장" 순서가 생기지 않는다.
 // 1) 후보가 모두 이 투표의 후보인지 확인 (DB 복합 FK도 같은 규칙으로 막는다)
 // 2) responses 행을 upsert → 같은 사용자의 동시 제출은 이 행의 잠금에서 줄을 선다
 // 3) 선택을 지우고 새로 넣는다 → 마지막 응답 하나만 남는다 (두 응답이 합쳐지지 않는다)
 export async function saveResponse(pollId: string, userId: string, candidateIds: string[]): Promise<void> {
   const unique = [...new Set(candidateIds)];
   await db.transaction(async (tx) => {
+    const [poll] = await tx
+      .select({ status: polls.status })
+      .from(polls)
+      .where(eq(polls.id, pollId))
+      .for("share");
+    if (poll?.status !== "open") throw new PollConfirmedError();
+
     const owned = await tx
       .select({ id: candidates.id })
       .from(candidates)
@@ -111,4 +121,23 @@ export async function saveResponse(pollId: string, userId: string, candidateIds:
       .where(and(eq(responseChoices.pollId, pollId), eq(responseChoices.userId, userId)));
     await tx.insert(responseChoices).values(unique.map((candidateId) => ({ pollId, userId, candidateId })));
   });
+}
+
+export type ConfirmResult = "confirmed" | "already_confirmed" | "invalid_candidate";
+
+// 확정: 이 투표의 후보인지 확인한 뒤, 투표 중일 때만 상태를 바꾼다.
+// UPDATE는 응답 트랜잭션의 FOR SHARE 잠금이 풀릴 때까지 기다린다.
+export async function confirmPoll(pollId: string, candidateId: string): Promise<ConfirmResult> {
+  const [owned] = await db
+    .select({ id: candidates.id })
+    .from(candidates)
+    .where(and(eq(candidates.pollId, pollId), eq(candidates.id, candidateId)));
+  if (!owned) return "invalid_candidate";
+
+  const updated = await db
+    .update(polls)
+    .set({ status: "confirmed", confirmedCandidateId: candidateId })
+    .where(and(eq(polls.id, pollId), eq(polls.status, "open")))
+    .returning({ id: polls.id });
+  return updated.length > 0 ? "confirmed" : "already_confirmed";
 }

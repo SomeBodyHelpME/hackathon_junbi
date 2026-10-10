@@ -62,3 +62,20 @@ describe("PUT /api/polls/:id/response", () => {
     expect(res.json()).toEqual({ error: { code: "VALIDATION_ERROR", message: M.choiceRequired } });
   });
 });
+
+describe("POST /api/polls/:id/confirm", () => {
+  it("비로그인은 401", async () => {
+    const res = await req("POST", `/api/polls/${pollId}/confirm`, { candidateId: pollId }, null);
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("후보 id 형식이 틀리면 400", async () => {
+    const res = await req("POST", `/api/polls/${pollId}/confirm`, { candidateId: "c-1" });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("투표 id가 UUID가 아니면 404", async () => {
+    expect((await req("POST", "/api/polls/not-a-uuid/confirm", { candidateId: pollId })).statusCode).toBe(404);
+  });
+});

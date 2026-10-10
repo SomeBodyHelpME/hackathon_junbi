@@ -8,6 +8,13 @@
       "when": 1791637049867,
       "tag": "0000_lively_dust",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791637640371,
+      "tag": "0001_confirm_same_poll",
+      "breakpoints": true
     }
   ]
 }
