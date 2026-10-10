@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { RoomListResponse } from "@kit/contracts";
 import { apiFetch } from "@/lib/api";
 
@@ -22,8 +23,10 @@ export function RoomList() {
       <h2 className="mb-4 text-lg font-semibold">회의실</h2>
       <ul aria-label="회의실 목록" className="grid gap-2 sm:grid-cols-3">
         {rooms.map((room) => (
-          <li key={room.id} className="rounded border p-3">
-            <span className="font-medium">{room.name}</span>
+          <li key={room.id} className="rounded border p-3 hover:bg-gray-50">
+            <Link href={`/rooms/${room.id}`} className="font-medium text-blue-700 hover:underline">
+              {room.name}
+            </Link>
             <span className="ml-2 text-sm text-gray-500">{room.capacity}인</span>
           </li>
         ))}

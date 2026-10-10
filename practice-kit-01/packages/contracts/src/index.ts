@@ -88,3 +88,13 @@ export type Reservation = z.infer<typeof Reservation>;
 
 export const ReservationListResponse = z.array(Reservation);
 export type ReservationListResponse = z.infer<typeof ReservationListResponse>;
+
+// 예약 조회: "내 예약" 또는 회의실·날짜(Asia/Seoul 하루)
+export const ReservationListQuery = z.union([
+  z.object({ mine: z.literal("true") }),
+  z.object({
+    roomId: z.string().min(1),
+    date: z.iso.date({ error: "날짜 형식은 YYYY-MM-DD입니다" }),
+  }),
+]);
+export type ReservationListQuery = z.infer<typeof ReservationListQuery>;

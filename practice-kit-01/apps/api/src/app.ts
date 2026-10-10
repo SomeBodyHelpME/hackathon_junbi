@@ -13,7 +13,12 @@ const COOKIE_SECRET = process.env.COOKIE_SECRET ?? "dev-only-cookie-secret-chang
 export async function buildApp(opts: { logger?: boolean } = {}) {
   const app = Fastify({ logger: opts.logger ?? false });
 
-  await app.register(cors, { origin: WEB_ORIGIN, credentials: true });
+  // DELETE는 preflight 대상이라 허용 메서드를 명시한다. (CORS는 브라우저 정책일 뿐 권한 검사가 아니다.)
+  await app.register(cors, {
+    origin: WEB_ORIGIN,
+    credentials: true,
+    methods: ["GET", "HEAD", "POST", "DELETE"],
+  });
   await app.register(cookie, { secret: COOKIE_SECRET });
   registerErrorHandlers(app);
 

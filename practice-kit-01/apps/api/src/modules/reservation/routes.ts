@@ -1,15 +1,26 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { CreateReservationRequest, type Reservation, type ReservationListResponse } from "@kit/contracts";
+import {
+  CreateReservationRequest,
+  ReservationListQuery,
+  type Reservation,
+  type ReservationListResponse,
+} from "@kit/contracts";
 import { AppError, parse } from "../../common/errors.js";
 import { requireUser } from "../../common/auth.js";
 import { hasPgCode, PG_EXCLUSION_VIOLATION } from "../../common/db-errors.js";
-import { findByUser, insertReservation, roomExists } from "./repository.js";
+import {
+  deleteOwned,
+  findByRoomAndDate,
+  findByUser,
+  findOwner,
+  insertReservation,
+  roomExists,
+} from "./repository.js";
 
-// REQ-01에서는 "내 예약"(mine=true) 조회만 지원한다. 회의실·날짜별 조회는 REQ-03에서 추가.
-const ListQuery = z.object({
-  mine: z.literal("true", { error: "mine=true가 필요합니다" }),
-});
+const IdParams = z.object({ id: z.uuid() });
+
+const notFound = () => new AppError(404, "NOT_FOUND", "예약을 찾을 수 없습니다");
 
 export async function reservationRoutes(app: FastifyInstance) {
   app.post("/api/reservations", { preHandler: requireUser }, async (req, reply) => {
@@ -40,8 +51,27 @@ export async function reservationRoutes(app: FastifyInstance) {
   });
 
   app.get("/api/reservations", { preHandler: requireUser }, async (req) => {
-    parse(ListQuery, req.query);
-    const list = await findByUser(req.userId!);
+    const query = parse(ReservationListQuery, req.query);
+    const list =
+      "mine" in query
+        ? await findByUser(req.userId!)
+        : await findByRoomAndDate(query.roomId, query.date);
     return list satisfies ReservationListResponse;
+  });
+
+  // 권한 검사는 반드시 여기(API 핸들러)에서 한다. 화면의 버튼 숨김은 UX일 뿐 보안이 아니다.
+  // 순서: 인증(401, preHandler) → 대상 존재(404) → 소유자(403) → 삭제(204)
+  app.delete("/api/reservations/:id", { preHandler: requireUser }, async (req, reply) => {
+    const params = IdParams.safeParse(req.params);
+    if (!params.success) throw notFound();
+
+    const owner = await findOwner(params.data.id);
+    if (!owner) throw notFound();
+    if (owner.userId !== req.userId) {
+      throw new AppError(403, "FORBIDDEN", "본인 예약만 취소할 수 있습니다");
+    }
+
+    if (!(await deleteOwned(params.data.id, req.userId!))) throw notFound();
+    return reply.status(204).send();
   });
 }

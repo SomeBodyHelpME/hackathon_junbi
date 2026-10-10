@@ -25,3 +25,8 @@ export function formatRange(startAt: string, endAt: string): string {
   const end = new Date(endAt);
   return `${dateFmt.format(start)} ${timeFmt.format(start)}–${timeFmt.format(end)}`;
 }
+
+// 오늘 날짜 (Asia/Seoul) "YYYY-MM-DD"
+export function todayInSeoul(): string {
+  return dateFmt.format(new Date());
+}

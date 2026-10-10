@@ -83,3 +83,34 @@ describe("GET /api/reservations", () => {
     expect(res.statusCode).toBe(400);
   });
 });
+
+describe("DELETE /api/reservations/:id", () => {
+  const someId = "00000000-0000-4000-8000-000000000000";
+
+  it("비로그인은 401 (AC-11과 같은 원칙)", async () => {
+    const res = await app.inject({ method: "DELETE", url: `/api/reservations/${someId}` });
+    expect(res.statusCode).toBe(401);
+    expect(res.json().error.code).toBe("UNAUTHORIZED");
+  });
+
+  it("id가 UUID 형식이 아니면 DB 조회 없이 404", async () => {
+    const res = await app.inject({
+      method: "DELETE",
+      url: "/api/reservations/not-a-uuid",
+      cookies: { uid: sessionCookie },
+    });
+    expect(res.statusCode).toBe(404);
+    expect(res.json().error.code).toBe("NOT_FOUND");
+  });
+});
+
+describe("GET /api/reservations 회의실·날짜 조회 검증", () => {
+  it("날짜 형식이 틀리면 400", async () => {
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/reservations?roomId=r-1&date=2099-12",
+      cookies: { uid: sessionCookie },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+});

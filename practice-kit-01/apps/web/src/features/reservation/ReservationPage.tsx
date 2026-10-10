@@ -35,7 +35,7 @@ export function ReservationPage() {
   return (
     <>
       <ReservationForm rooms={rooms} onCreated={refreshMine} />
-      <MyReservationList reservations={mine} />
+      <MyReservationList reservations={mine} onChanged={refreshMine} />
     </>
   );
 }

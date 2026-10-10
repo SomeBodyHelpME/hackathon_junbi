@@ -62,3 +62,33 @@ describe("/api/test/reset 등록 조건", () => {
     expect(app.hasRoute({ method: "POST", url: "/api/test/reset" })).toBe(true);
   });
 });
+
+describe("CORS", () => {
+  it("웹 출처의 DELETE preflight를 허용한다 (예약 취소)", async () => {
+    app = await buildApp();
+    const res = await app.inject({
+      method: "OPTIONS",
+      url: "/api/reservations/00000000-0000-4000-8000-000000000000",
+      headers: {
+        origin: "http://localhost:3000",
+        "access-control-request-method": "DELETE",
+      },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
+    expect(String(res.headers["access-control-allow-methods"])).toContain("DELETE");
+    expect(res.headers["access-control-allow-credentials"]).toBe("true");
+  });
+
+  it("다른 출처는 허용하지 않는다", async () => {
+    app = await buildApp();
+    const res = await app.inject({
+      method: "OPTIONS",
+      url: "/api/rooms",
+      headers: { origin: "http://evil.example", "access-control-request-method": "GET" },
+    });
+    // 허용 출처를 고정 문자열로 응답하므로 브라우저가 출처 불일치로 차단한다.
+    expect(res.headers["access-control-allow-origin"]).not.toBe("http://evil.example");
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
+  });
+});
