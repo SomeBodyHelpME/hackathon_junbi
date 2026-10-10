@@ -33,3 +33,28 @@ export type Book = z.infer<typeof Book>;
 
 export const BookListResponse = z.array(Book);
 export type BookListResponse = z.infer<typeof BookListResponse>;
+
+// ── 대여 ──────────────────────────────────────────────────
+export const LOAN_LIMIT = 2;
+export const LOAN_DAYS = 14;
+export const EXTEND_DAYS = 7;
+
+export const BorrowRequest = z.object({
+  bookId: z.string({ error: "도서를 선택하세요" }).min(1, "도서를 선택하세요"),
+});
+export type BorrowRequest = z.infer<typeof BorrowRequest>;
+
+// 날짜(borrowedOn, dueOn)는 Asia/Seoul 기준 "YYYY-MM-DD"
+export const Loan = z.object({
+  id: z.string(),
+  bookId: z.string(),
+  bookTitle: z.string(),
+  borrowedOn: z.string(),
+  dueOn: z.string(),
+  extended: z.boolean(),
+  returnedAt: z.string().nullable(),
+});
+export type Loan = z.infer<typeof Loan>;
+
+export const LoanListResponse = z.array(Loan);
+export type LoanListResponse = z.infer<typeof LoanListResponse>;

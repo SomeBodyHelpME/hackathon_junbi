@@ -12,6 +12,9 @@ export function Header({ user, onLogout }: { user: User | null; onLogout: () => 
           <Link href="/" className="hover:underline">
             도서
           </Link>
+          <Link href="/books" className="hover:underline">
+            대여하기
+          </Link>
         </nav>
       </div>
       {user && (

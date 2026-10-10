@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "loans_active_user_book_unique" ON "loans" USING btree ("user_id","book_id") WHERE "loans"."returned_at" is null;
