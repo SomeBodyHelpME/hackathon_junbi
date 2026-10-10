@@ -7,6 +7,7 @@ import { hasPgCode, PG_UNIQUE_VIOLATION } from "../../common/db-errors.js";
 import {
   borrow,
   BorrowError,
+  extendLoan,
   listActiveLoans,
   returnLoan,
   type BorrowFailure,
@@ -69,5 +70,12 @@ export async function loanRoutes(app: FastifyInstance) {
   app.post("/api/loans/:id/return", { preHandler: requireUser }, async (req, reply) => {
     throwIfFailed(await returnLoan(loanIdFrom(req.params), req.userId!));
     return reply.status(204).send();
+  });
+
+  // 연장: 인증(401) → 대여 존재(404) → 본인(403) → 이미 반납(409) → 이미 연장(409) → 200
+  app.post("/api/loans/:id/extend", { preHandler: requireUser }, async (req) => {
+    const { result, loan } = await extendLoan(loanIdFrom(req.params), req.userId!);
+    throwIfFailed(result);
+    return loan satisfies Loan | undefined;
   });
 }

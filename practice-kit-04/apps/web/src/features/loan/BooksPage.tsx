@@ -46,6 +46,9 @@ export function BooksPage() {
   const giveBack = (loanId: string) =>
     run(() => apiFetch<void>(`/api/loans/${loanId}/return`, { method: "POST" }));
 
+  const extend = (loanId: string) =>
+    run(() => apiFetch<Loan>(`/api/loans/${loanId}/extend`, { method: "POST" }));
+
   if (!data) return error ? <p role="alert">{error}</p> : <p>불러오는 중…</p>;
 
   return (
@@ -73,14 +76,26 @@ export function BooksPage() {
       <MyLoans
         loans={data.loans}
         actions={(l) => (
-          <button
-            type="button"
-            onClick={() => giveBack(l.id)}
-            disabled={busy}
-            className="rounded border px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
-          >
-            반납
-          </button>
+          <>
+            {!l.extended && (
+              <button
+                type="button"
+                onClick={() => extend(l.id)}
+                disabled={busy}
+                className="rounded border px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
+              >
+                연장
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => giveBack(l.id)}
+              disabled={busy}
+              className="rounded border px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
+            >
+              반납
+            </button>
+          </>
         )}
       />
     </>

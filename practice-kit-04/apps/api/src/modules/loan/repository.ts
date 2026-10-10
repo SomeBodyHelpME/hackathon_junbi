@@ -1,5 +1,5 @@
 import { and, asc, eq, isNull, sql } from "drizzle-orm";
-import { LOAN_DAYS, LOAN_LIMIT, type Loan } from "@kit/contracts";
+import { EXTEND_DAYS, LOAN_DAYS, LOAN_LIMIT, type Loan } from "@kit/contracts";
 import { db } from "../../db/client.js";
 import { books, loans, users } from "../../db/schema.js";
 import { addDays, seoulDateOf } from "./due.js";
@@ -107,4 +107,24 @@ export async function returnLoan(loanId: string, userId: string): Promise<LoanAc
       .where(eq(books.id, locked.loan!.bookId));
     return "ok";
   });
+}
+
+// 연장: 존재(404) → 본인(403) → 이미 반납(409) → 이미 연장(409) → 기존 기한 + 7일.
+// 대여 행 잠금으로 동시 연장도 1회만 반영된다. 기한은 서버가 계산한다.
+export async function extendLoan(
+  loanId: string,
+  userId: string,
+): Promise<{ result: LoanActionResult; loan?: Loan }> {
+  const result = await db.transaction(async (tx) => {
+    const locked = await lockOwnedActiveLoan(tx, loanId, userId);
+    if (!("loan" in locked)) return locked.result;
+    if (locked.loan!.extended) return "already_extended" as const;
+
+    await tx
+      .update(loans)
+      .set({ extended: true, dueOn: addDays(locked.loan!.dueOn, EXTEND_DAYS) })
+      .where(eq(loans.id, loanId));
+    return "ok" as const;
+  });
+  return result === "ok" ? { result, loan: await findLoan(loanId) } : { result };
 }
