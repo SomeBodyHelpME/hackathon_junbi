@@ -10,7 +10,8 @@
     "db:seed": "pnpm --filter @kit/api db:seed",
     "lint": "eslint .",
     "test:unit": "pnpm -r test:unit",
-    "test:bdd": "bddgen && playwright test"
+    "test:bdd": "bddgen && playwright test",
+    "test:int": "pnpm --filter @kit/api test:int"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.0",
