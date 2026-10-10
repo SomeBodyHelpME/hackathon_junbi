@@ -1,3 +1,80 @@
+# 사내 도서 대여 서비스 (practice-kit-04)
+
+사내 서가의 책을 빌리고, 반납하고, 반납 기한을 한 번 연장하는 서비스 (요구사항: `docs/prd.md`, 작업 단위: `issues.md`).
+
+- 기술 스택: kit-01과 동일 (pnpm workspace · Next.js 3000 · Fastify 4000 · PostgreSQL + Drizzle · Zod · playwright-bdd · Vitest)
+- 최종 검증: commit `ef3c98e`, 2026-10-10 22:53 KST, **모든 항목 PASS**
+
+## 실행 방법
+
+```bash
+corepack enable                          # PC당 1회 (Docker Desktop 실행 필요)
+pnpm install
+pnpm exec playwright install chromium    # 새 PC에서만
+docker compose up -d --wait
+pnpm db:migrate && pnpm db:seed
+pnpm dev                                 # http://localhost:3000 (대여 화면: /books)
+
+# 검증 (pnpm dev는 끈 상태에서)
+pnpm lint && pnpm typecheck && pnpm test:unit
+pnpm test:int                            # 실제 DB 필요, 대여 기록을 지우고 재고를 되돌림
+pnpm test:bdd
+
+# 결과 문서 재생성
+PLAYWRIGHT_JSON_OUTPUT_NAME=docs/test-logs/bdd-results.json pnpm test:bdd --reporter=list,json
+node scripts/e2e-report.mjs $(git rev-parse --short HEAD)
+
+docker compose down                      # 다른 키트로 넘어가기 전 (포트 3000/4000/5432 해제)
+```
+
+`Timed out waiting ... webServer` → DB 꺼짐(`docker compose ps`) · `reset 실패` → `pnpm dev` 종료 후 재실행 · 반납 기한 BDD는 서울 자정 직전 실행을 피할 것
+
+## 최종 검증 결과
+
+commit `ef3c98e` · 2026-10-10 22:53:13 ~ 22:53:31 KST · DB 볼륨 삭제 후 마이그레이션·시드부터 실행 · 로그 `docs/test-logs/`
+
+| 명령 | 결과 | 로그 |
+|---|---|---|
+| `pnpm lint` | PASS | `docs/test-logs/lint.log` |
+| `pnpm typecheck` | PASS | `docs/test-logs/typecheck.log` |
+| `pnpm test:unit` | PASS — 31 passed / 0 failed (contracts 7, api 24) | `docs/test-logs/test-unit.log` |
+| `pnpm test:int` | PASS — 22 passed / 0 failed | `docs/test-logs/test-int.log` |
+| `pnpm test:bdd` | PASS — 13 passed / 0 failed / 0 skipped / 0 flaky | `docs/test-logs/test-bdd.log`, `docs/e2e-test.md` |
+
+## 증거 인덱스 (REQ → BDD → Issue → 테스트 → 결과)
+
+| REQ | BDD (시나리오 / AC) | Issue | 단위·통합 테스트 | 결과 |
+|---|---|---|---|---|
+| REQ-00 환경·공통부 | `features/smoke.feature` (1) | `issues.md` [REQ-00] | `apps/api/src/app.test.ts` · `packages/contracts/src/index.test.ts` | BDD 1/1 PASS · unit PASS |
+| REQ-01 도서 대여 | `features/loan-borrow.feature` (4) / AC-01~04 | `issues.md` [REQ-01] | `apps/api/src/modules/loan/routes.test.ts` · `borrow.int.test.ts` (마지막 1권 10명 동시 → 1명, 한 사람 3권 동시 → 2권, 같은 책 동시 5번 → 1건, CHECK·부분 유니크) | BDD 4/4 PASS · unit PASS · int PASS |
+| REQ-02 반납(보안) | `features/loan-return.feature` (4) / AC-05~08 | `issues.md` [REQ-02] | `routes.test.ts` (반납 401·404) · `return.int.test.ts` (본인 204·재고 복구, 타인 403, 409, 동시 5번 → 재고 1회 복구) | BDD 4/4 PASS · unit PASS · int PASS |
+| REQ-03 반납 기한·연장 | `features/loan-extend.feature` (4) / AC-09~12 | `issues.md` [REQ-03] | `due.test.ts` (서울 자정·연도·윤년 경계) · `extend.int.test.ts` (+7일, 재연장 409, 타인 403, 동시 5번 → 1회) · `docs/security-compliance.md` | BDD 4/4 PASS · unit PASS · int PASS |
+
+### 설계 결정 기록
+
+| 결정 | 이유 | 위치 |
+|---|---|---|
+| 재고 = `available_copies` 조건부 UPDATE + CHECK(0~total) | 마지막 1권을 한 명만 가져가게 원자적으로 차감, 음수는 DB가 거부 | `loan/repository.ts` `borrow`, `drizzle/0000_*.sql` |
+| 대여 시 사용자 행 `FOR UPDATE` | 같은 사람의 동시 대여를 줄 세워 한도 2권 보장. 잠금 제거 시 3권 대여되는 것 확인 | `borrow` |
+| 같은 책 중복 대여 = 부분 유니크 인덱스 `WHERE returned_at IS NULL` | 반납 기록은 남기면서 대여 중 중복만 금지 | `drizzle/0001_*.sql` |
+| 반납·연장 = 대여 행 `FOR UPDATE` 후 404 → 403 → 409 | 동시 반납에도 재고 1회 복구, 동시 연장 1회 반영. 본인 검사 제거 시 AC-06 FAIL 확인 | `lockOwnedActiveLoan` |
+| 반납 기한은 서버가 서울 날짜로 계산 | 클라이언트 날짜 조작 방지, 시간대 경계 일관성 | `loan/due.ts` |
+
+### 리뷰 체크포인트 근거
+
+| 체크포인트 | 근거 |
+|---|---|
+| `.feature` 확정 이후 미변경 | `git diff 56eb4d5 -- practice-kit-04/features/loan-*.feature` 0줄 |
+| 재고·한도 동시성 | int "남은 1권을 10명이 동시에…", "한 사람이 3권을 동시에…" |
+| 같은 책 중복 대여 DB 제약 | `loans_active_user_book_unique` · int 테스트 |
+| 반납·연장의 403/409가 API에 있음 | `loan/routes.ts` → `lockOwnedActiveLoan` |
+| 반납 기한 서버 계산 | `loan/due.ts` · `BorrowRequest`에 날짜 필드 없음 |
+| `/api/test/reset` 운영 미등록 | unit "NODE_ENV=test가 아니면 라우트가 없다" |
+| 고정 대기 미사용 | `grep -rn waitForTimeout features/` 0건 |
+| Step 코드 수정 이력 | 프롬프트 2 커밋 `1087d89` 이후 변경 0 |
+
+---
+
 # 사내 도서 대여 모의 개발 키트 (kit-04)
 
 ## 파일 구성

@@ -1,0 +1,962 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/24.1.0/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--reporter=list,json"
+    ],
+    "configFile": "playwright.config.ts",
+    "rootDir": ".features-gen",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "snapshotDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:3000",
+          "actionTimeout": 10000,
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "features/loan-borrow.feature.spec.js",
+      "file": "features/loan-borrow.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "도서 대여",
+          "file": "features/loan-borrow.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "책을 빌리면 내 대여 목록에 표시되고 남은 권수가 줄어든다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-01"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 767,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 22
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 242
+                        },
+                        {
+                          "title": "When \"클린 코드\"를 빌린다",
+                          "duration": 172
+                        },
+                        {
+                          "title": "Then \"내 대여\" 목록에 \"클린 코드\"가 표시된다",
+                          "duration": 9
+                        },
+                        {
+                          "title": "And \"클린 코드\"의 남은 권수는 1권이다",
+                          "duration": 3
+                        },
+                        {
+                          "title": "And 페이지를 새로고침해도 \"내 대여\" 목록에 \"클린 코드\"가 표시된다",
+                          "duration": 105
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:26.510Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bb1ab01b153a75733577-7b71bc62f6b7c6cae4dc",
+              "file": "features/loan-borrow.feature.spec.js",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "남은 권수가 없는 책은 빌릴 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-02"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 525,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"리팩터링\"을 빌려 두었다",
+                          "duration": 207
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "When 도서 화면에 접속한다",
+                          "duration": 173
+                        },
+                        {
+                          "title": "Then \"리팩터링\"은 \"대여 불가\"로 표시된다",
+                          "duration": 58
+                        },
+                        {
+                          "title": "And \"리팩터링\"에는 대여 버튼이 없다",
+                          "duration": 5
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:27.530Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bb1ab01b153a75733577-4bf12b3de4e00be65517",
+              "file": "features/loan-borrow.feature.spec.js",
+              "line": 15,
+              "column": 3
+            },
+            {
+              "title": "이미 빌리고 있는 책은 다시 빌릴 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-03"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 463,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"클린 코드\"를 빌려 두었다",
+                          "duration": 41
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 193
+                        },
+                        {
+                          "title": "When \"클린 코드\"를 빌린다",
+                          "duration": 77
+                        },
+                        {
+                          "title": "Then \"이미 대여 중인 도서입니다\" 오류가 표시된다",
+                          "duration": 82
+                        },
+                        {
+                          "title": "And \"클린 코드\"의 남은 권수는 1권이다",
+                          "duration": 2
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:28.061Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bb1ab01b153a75733577-a17735944caaa56f989b",
+              "file": "features/loan-borrow.feature.spec.js",
+              "line": 23,
+              "column": 3
+            },
+            {
+              "title": "대여 한도 2권을 넘겨 빌릴 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-04"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 490,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"클린 코드\"를 빌려 두었다",
+                          "duration": 45
+                        },
+                        {
+                          "title": "And \"상은\"이 \"리팩터링\"을 빌려 두었다",
+                          "duration": 44
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 173
+                        },
+                        {
+                          "title": "When \"도메인 주도 설계\"를 빌린다",
+                          "duration": 73
+                        },
+                        {
+                          "title": "Then \"대여 한도(2권)를 초과했습니다\" 오류가 표시된다",
+                          "duration": 84
+                        },
+                        {
+                          "title": "And \"도메인 주도 설계\"의 남은 권수는 1권이다",
+                          "duration": 2
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:28.530Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bb1ab01b153a75733577-2393a820729820285f90",
+              "file": "features/loan-borrow.feature.spec.js",
+              "line": 32,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/loan-extend.feature.spec.js",
+      "file": "features/loan-extend.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "반납 기한 및 연장",
+          "file": "features/loan-extend.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "책을 빌리면 반납 기한이 14일 뒤로 표시된다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-09"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 415,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 174
+                        },
+                        {
+                          "title": "When \"클린 코드\"를 빌린다",
+                          "duration": 86
+                        },
+                        {
+                          "title": "Then \"내 대여\" 목록의 \"클린 코드\" 반납 기한은 오늘부터 14일 뒤다",
+                          "duration": 82
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:29.030Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "558228cca0bab430ccff-2325571d3a65e868f8fa",
+              "file": "features/loan-extend.feature.spec.js",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "한 번 연장하면 반납 기한이 7일 늘어난다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-10"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 460,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"클린 코드\"를 빌려 두었다",
+                          "duration": 44
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 7
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 180
+                        },
+                        {
+                          "title": "When \"내 대여\" 목록에서 \"클린 코드\"를 연장한다",
+                          "duration": 80
+                        },
+                        {
+                          "title": "Then \"내 대여\" 목록의 \"클린 코드\" 반납 기한은 오늘부터 21일 뒤다",
+                          "duration": 81
+                        },
+                        {
+                          "title": "And \"클린 코드\"에는 연장 버튼이 없다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:29.450Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "558228cca0bab430ccff-432fcadc23baf151c4a3",
+              "file": "features/loan-extend.feature.spec.js",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "연장은 한 번만 할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-11",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 160,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"클린 코드\"를 빌려 두었다",
+                          "duration": 43
+                        },
+                        {
+                          "title": "And \"상은\"이 \"클린 코드\" 대여를 연장해 두었다",
+                          "duration": 39
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "When \"상은\"의 \"클린 코드\" 대여 연장을 API로 직접 요청한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "Then 요청은 이미 연장됨(409)으로 거부된다",
+                          "duration": 1
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:29.916Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "558228cca0bab430ccff-17fa892960196210b725",
+              "file": "features/loan-extend.feature.spec.js",
+              "line": 22,
+              "column": 3
+            },
+            {
+              "title": "다른 사용자의 대여는 연장할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-12",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 137,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"클린 코드\"를 빌려 두었다",
+                          "duration": 38
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "When \"관응\"의 \"클린 코드\" 대여 연장을 API로 직접 요청한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "Then 요청은 권한 없음(403)으로 거부된다",
+                          "duration": 0
+                        },
+                        {
+                          "title": "And \"관응\"의 \"클린 코드\" 반납 기한은 오늘부터 14일 뒤 그대로다",
+                          "duration": 30
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:30.082Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "558228cca0bab430ccff-92887c0bbfe27cd98c97",
+              "file": "features/loan-extend.feature.spec.js",
+              "line": 30,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/loan-return.feature.spec.js",
+      "file": "features/loan-return.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "반납",
+          "file": "features/loan-return.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "본인 대여를 반납하면 남은 권수가 복구된다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-05"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 565,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"리팩터링\"을 빌려 두었다",
+                          "duration": 38
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "And 도서 화면에 접속한다",
+                          "duration": 185
+                        },
+                        {
+                          "title": "When \"내 대여\" 목록에서 \"리팩터링\"을 반납한다",
+                          "duration": 80
+                        },
+                        {
+                          "title": "Then \"내 대여\" 목록에 \"리팩터링\"이 표시되지 않는다",
+                          "duration": 81
+                        },
+                        {
+                          "title": "And \"리팩터링\"의 남은 권수는 1권이다",
+                          "duration": 3
+                        },
+                        {
+                          "title": "And 페이지를 새로고침해도 \"내 대여\" 목록에 \"리팩터링\"이 표시되지 않는다",
+                          "duration": 93
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:30.227Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b4dc0b7d4c661c0ce7b3-1d6bd064c5b9c0ae72f4",
+              "file": "features/loan-return.feature.spec.js",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "다른 사용자의 대여는 API로도 반납할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-06",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 161,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"리팩터링\"을 빌려 두었다",
+                          "duration": 40
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "When \"관응\"의 \"리팩터링\" 대여 반납을 API로 직접 요청한다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "Then 요청은 권한 없음(403)으로 거부된다",
+                          "duration": 1
+                        },
+                        {
+                          "title": "And \"관응\"의 \"리팩터링\" 대여는 그대로 유지된다",
+                          "duration": 44
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:30.798Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b4dc0b7d4c661c0ce7b3-9b6030ee08c7097ef52f",
+              "file": "features/loan-return.feature.spec.js",
+              "line": 16,
+              "column": 3
+            },
+            {
+              "title": "이미 반납된 대여는 다시 반납할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-07",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 157,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"리팩터링\"을 빌려 두었다",
+                          "duration": 42
+                        },
+                        {
+                          "title": "And \"상은\"이 \"리팩터링\"을 반납해 두었다",
+                          "duration": 36
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "When \"상은\"의 \"리팩터링\" 대여 반납을 API로 직접 요청한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "Then 요청은 이미 반납됨(409)으로 거부된다",
+                          "duration": 1
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:30.966Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b4dc0b7d4c661c0ce7b3-eb0c1a367f36d55614ae",
+              "file": "features/loan-return.feature.spec.js",
+              "line": 24,
+              "column": 3
+            },
+            {
+              "title": "로그인하지 않으면 빌릴 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-08",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 29,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When 로그인하지 않은 상태로 \"클린 코드\" 대여를 API로 직접 요청한다",
+                          "duration": 20
+                        },
+                        {
+                          "title": "Then 요청은 인증 필요(401)로 거부된다",
+                          "duration": 1
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:31.128Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "b4dc0b7d4c661c0ce7b3-8fb7ae205e147caf7c8c",
+              "file": "features/loan-return.feature.spec.js",
+              "line": 32,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/smoke.feature.spec.js",
+      "file": "features/smoke.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "개발 환경 동작 확인",
+          "file": "features/smoke.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "로그인한 사용자와 도서 목록이 화면에 표시된다",
+              "ok": true,
+              "tags": [
+                "REQ-00",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 329,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "When 메인 화면에 접속한다",
+                          "duration": 178
+                        },
+                        {
+                          "title": "Then 로그인한 사용자로 \"상은\"이 표시된다",
+                          "duration": 49
+                        },
+                        {
+                          "title": "And 도서 목록에 다음 도서가 표시된다",
+                          "duration": 13
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:53:31.164Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "61dea7e8757b4915e47a-6c728362da3fe620df86",
+              "file": "features/smoke.feature.spec.js",
+              "line": 6,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T13:53:23.327Z",
+    "duration": 8248.848,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
