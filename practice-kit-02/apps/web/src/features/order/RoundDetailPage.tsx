@@ -14,6 +14,7 @@ type Loaded = { token: number; round: RoundDetail; menus: MenuListResponse };
 export function RoundDetailPage({ roundId }: { roundId: string }) {
   const user = useUser();
   const [closing, setClosing] = useState(false);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +37,20 @@ export function RoundDetailPage({ roundId }: { roundId: string }) {
   const isOpen = round.status === "open";
   // 버튼 노출은 UX일 뿐이다. 개설자 검사는 API(POST /api/rounds/:id/close)가 한다.
   const canClose = isOpen && round.createdBy === user.id;
+
+  // 본인 주문 취소. 권한·상태 검사는 API(DELETE /api/orders/:id)가 한다.
+  async function cancelOrder(orderId: string) {
+    setCancellingId(orderId);
+    setError(null);
+    try {
+      await apiFetch<void>(`/api/orders/${orderId}`, { method: "DELETE" });
+      reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "취소하지 못했습니다");
+    } finally {
+      setCancellingId(null);
+    }
+  }
 
   async function closeRound() {
     setClosing(true);
@@ -99,6 +114,16 @@ export function RoundDetailPage({ roundId }: { roundId: string }) {
                   {o.memo ? ` · ${o.memo}` : ""}
                 </p>
               </div>
+              {isOpen && o.userId === user.id && (
+                <button
+                  type="button"
+                  onClick={() => cancelOrder(o.id)}
+                  disabled={cancellingId === o.id}
+                  className="rounded border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50"
+                >
+                  취소
+                </button>
+              )}
             </li>
           ))}
         </ul>

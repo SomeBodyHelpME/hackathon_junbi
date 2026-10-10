@@ -68,3 +68,15 @@ describe("POST /api/rounds/:id/close", () => {
     expect(res.statusCode).toBe(404);
   });
 });
+
+describe("DELETE /api/orders/:id", () => {
+  it("비로그인은 401", async () => {
+    const res = await app.inject({ method: "DELETE", url: `/api/orders/${roundId}` });
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("주문 id가 UUID가 아니면 DB 조회 없이 404", async () => {
+    const res = await app.inject({ method: "DELETE", url: "/api/orders/not-a-uuid", cookies: { uid: cookie } });
+    expect(res.statusCode).toBe(404);
+  });
+});

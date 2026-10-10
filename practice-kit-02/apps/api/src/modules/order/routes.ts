@@ -12,6 +12,7 @@ import { AppError, parse } from "../../common/errors.js";
 import { requireUser } from "../../common/auth.js";
 import { hasPgCode, PG_UNIQUE_VIOLATION } from "../../common/db-errors.js";
 import {
+  cancelOrder,
   closeRound,
   findRound,
   findRoundDetail,
@@ -88,5 +89,19 @@ export async function orderRoutes(app: FastifyInstance) {
       }
       throw err;
     }
+  });
+
+  // 주문 취소: 인증(401) → 주문 존재(404) → 본인(403) → 모집 중(409) → 204
+  // 권한·상태 검사는 반드시 여기(API 핸들러)에서 한다. 화면의 버튼 숨김은 UX일 뿐이다.
+  app.delete("/api/orders/:id", { preHandler: requireUser }, async (req, reply) => {
+    const parsed = IdParams.safeParse(req.params);
+    const orderNotFound = () => new AppError(404, "NOT_FOUND", "주문을 찾을 수 없습니다");
+    if (!parsed.success) throw orderNotFound();
+
+    const result = await cancelOrder(parsed.data.id, req.userId!);
+    if (result === "not_found") throw orderNotFound();
+    if (result === "forbidden") throw new AppError(403, "FORBIDDEN", "본인 주문만 취소할 수 있습니다");
+    if (result === "closed") throw roundClosed();
+    return reply.status(204).send();
   });
 }

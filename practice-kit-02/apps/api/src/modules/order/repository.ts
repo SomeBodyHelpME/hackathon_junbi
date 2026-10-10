@@ -127,3 +127,31 @@ export async function insertOrder(input: {
   });
   return (await findOrder(id))!;
 }
+
+export type CancelResult = "deleted" | "not_found" | "forbidden" | "closed";
+
+// 주문 취소: 모집 행을 FOR SHARE로 잠가 마감과 동시에 일어나도 순서를 보장한다.
+// 검사 순서: 주문 존재(404) → 본인(403) → 모집 중(409). 삭제는 id + user_id 조건으로 한다.
+export async function cancelOrder(orderId: string, userId: string): Promise<CancelResult> {
+  return db.transaction(async (tx) => {
+    const [order] = await tx
+      .select({ userId: orders.userId, roundId: orders.roundId })
+      .from(orders)
+      .where(eq(orders.id, orderId));
+    if (!order) return "not_found";
+    if (order.userId !== userId) return "forbidden";
+
+    const [round] = await tx
+      .select({ status: rounds.status })
+      .from(rounds)
+      .where(eq(rounds.id, order.roundId))
+      .for("share");
+    if (round?.status !== "open") return "closed";
+
+    const deleted = await tx
+      .delete(orders)
+      .where(and(eq(orders.id, orderId), eq(orders.userId, userId)))
+      .returning({ id: orders.id });
+    return deleted.length > 0 ? "deleted" : "not_found";
+  });
+}
