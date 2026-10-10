@@ -4,7 +4,36 @@ import { BorrowRequest, LOAN_LIMIT, type Loan, type LoanListResponse } from "@ki
 import { AppError, parse } from "../../common/errors.js";
 import { requireUser } from "../../common/auth.js";
 import { hasPgCode, PG_UNIQUE_VIOLATION } from "../../common/db-errors.js";
-import { borrow, BorrowError, listActiveLoans, type BorrowFailure } from "./repository.js";
+import {
+  borrow,
+  BorrowError,
+  listActiveLoans,
+  returnLoan,
+  type BorrowFailure,
+  type LoanActionResult,
+} from "./repository.js";
+
+const IdParams = z.object({ id: z.uuid() });
+
+const loanNotFound = () => new AppError(404, "NOT_FOUND", "대여를 찾을 수 없습니다");
+
+// UUID 형식이 아니면 DB 조회 없이 404
+function loanIdFrom(params: unknown): string {
+  const parsed = IdParams.safeParse(params);
+  if (!parsed.success) throw loanNotFound();
+  return parsed.data.id;
+}
+
+const ACTION_ERRORS: Record<Exclude<LoanActionResult, "ok">, () => AppError> = {
+  not_found: loanNotFound,
+  forbidden: () => new AppError(403, "FORBIDDEN", "본인 대여만 처리할 수 있습니다"),
+  already_returned: () => new AppError(409, "ALREADY_RETURNED", "이미 반납된 대여입니다"),
+  already_extended: () => new AppError(409, "ALREADY_EXTENDED", "연장은 1회만 가능합니다"),
+};
+
+function throwIfFailed(result: LoanActionResult) {
+  if (result !== "ok") throw ACTION_ERRORS[result]();
+}
 
 const ListQuery = z.object({ mine: z.literal("true", { error: "mine=true가 필요합니다" }) });
 
@@ -33,5 +62,12 @@ export async function loanRoutes(app: FastifyInstance) {
       if (hasPgCode(err, PG_UNIQUE_VIOLATION)) throw BORROW_ERRORS.already_borrowed();
       throw err;
     }
+  });
+
+  // 반납: 인증(401) → 대여 존재(404) → 본인(403) → 이미 반납(409) → 204
+  // 권한 검사는 반드시 여기(API)에서 한다. 화면의 버튼은 본인 대여에만 있지만 그것은 UX일 뿐이다.
+  app.post("/api/loans/:id/return", { preHandler: requireUser }, async (req, reply) => {
+    throwIfFailed(await returnLoan(loanIdFrom(req.params), req.userId!));
+    return reply.status(204).send();
   });
 }

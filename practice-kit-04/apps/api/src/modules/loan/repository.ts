@@ -77,3 +77,34 @@ export async function borrow(userId: string, bookId: string, now = new Date()): 
   });
   return (await findLoan(id))!;
 }
+
+export type LoanActionResult = "ok" | "not_found" | "forbidden" | "already_returned" | "already_extended";
+
+// 대여 행을 FOR UPDATE로 잠그고 소유자·상태를 확인한다.
+// 같은 대여에 대한 반납·연장이 동시에 와도 한 줄로 처리된다.
+async function lockOwnedActiveLoan(
+  tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+  loanId: string,
+  userId: string,
+) {
+  const [loan] = await tx.select().from(loans).where(eq(loans.id, loanId)).for("update");
+  if (!loan) return { result: "not_found" as const };
+  if (loan.userId !== userId) return { result: "forbidden" as const };
+  if (loan.returnedAt) return { result: "already_returned" as const };
+  return { loan };
+}
+
+// 반납: 인증 다음 순서는 존재(404) → 본인(403) → 이미 반납(409). 반납 표시와 재고 복구를 한 트랜잭션으로.
+export async function returnLoan(loanId: string, userId: string): Promise<LoanActionResult> {
+  return db.transaction(async (tx) => {
+    const locked = await lockOwnedActiveLoan(tx, loanId, userId);
+    if (!("loan" in locked)) return locked.result;
+
+    await tx.update(loans).set({ returnedAt: new Date() }).where(eq(loans.id, loanId));
+    await tx
+      .update(books)
+      .set({ availableCopies: sql`${books.availableCopies} + 1` })
+      .where(eq(books.id, locked.loan!.bookId));
+    return "ok";
+  });
+}

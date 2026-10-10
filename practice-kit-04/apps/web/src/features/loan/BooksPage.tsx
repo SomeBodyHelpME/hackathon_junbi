@@ -42,6 +42,10 @@ export function BooksPage() {
   const borrow = (bookId: string) =>
     run(() => apiFetch<Loan>("/api/loans", { method: "POST", body: JSON.stringify({ bookId }) }));
 
+  // 반납·연장 버튼은 "내 대여"(본인 대여)에만 있다. 권한 검사는 API가 한다.
+  const giveBack = (loanId: string) =>
+    run(() => apiFetch<void>(`/api/loans/${loanId}/return`, { method: "POST" }));
+
   if (!data) return error ? <p role="alert">{error}</p> : <p>불러오는 중…</p>;
 
   return (
@@ -66,7 +70,19 @@ export function BooksPage() {
           )
         }
       />
-      <MyLoans loans={data.loans} />
+      <MyLoans
+        loans={data.loans}
+        actions={(l) => (
+          <button
+            type="button"
+            onClick={() => giveBack(l.id)}
+            disabled={busy}
+            className="rounded border px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
+          >
+            반납
+          </button>
+        )}
+      />
     </>
   );
 }

@@ -41,3 +41,14 @@ describe("입력 검증 (400)", () => {
   });
 });
 
+
+describe("POST /api/loans/:id/return", () => {
+  it("비로그인은 401", async () => {
+    const res = await req("POST", "/api/loans/00000000-0000-4000-8000-000000000000/return", undefined, null);
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("대여 id가 UUID가 아니면 DB 조회 없이 404", async () => {
+    expect((await req("POST", "/api/loans/not-a-uuid/return")).statusCode).toBe(404);
+  });
+});
