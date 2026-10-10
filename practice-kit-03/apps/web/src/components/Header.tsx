@@ -12,6 +12,9 @@ export function Header({ user, onLogout }: { user: User | null; onLogout: () => 
           <Link href="/" className="hover:underline">
             팀원
           </Link>
+          <Link href="/polls" className="hover:underline">
+            투표
+          </Link>
         </nav>
       </div>
       {user && (
