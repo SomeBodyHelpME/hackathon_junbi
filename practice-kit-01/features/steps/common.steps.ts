@@ -27,9 +27,31 @@ Then("로그인한 사용자로 {string}이 표시된다", async ({ page }, name
   await expect(page.getByTestId("current-user")).toHaveText(name);
 });
 
+// ── 목록 ────────────────────────────────────────────────
 // 목록은 aria-label로 찾는다 (예: <ul aria-label="내 예약">).
 // 화면은 데이터를 다 불러온 뒤에만 목록을 렌더링해야 한다.
 // 로딩 중에 빈 목록을 먼저 그리면 "표시되지 않는다" 검증이 잘못 통과할 수 있다.
+
+Then("{string} 목록에 {string}가 표시된다", async ({ page }, listName: string, item: string) => {
+  const list = page.getByRole("list", { name: listName });
+  await expect(list.getByRole("listitem").filter({ hasText: item })).toHaveCount(1);
+});
+
+Then(
+  "{string} 목록에 {string}가 표시되지 않는다",
+  async ({ page }, listName: string, item: string) => {
+    const list = page.getByRole("list", { name: listName });
+    await expect(list).toBeVisible();
+    await expect(list.getByRole("listitem").filter({ hasText: item })).toHaveCount(0);
+  },
+);
+
+Then("{string} 목록은 비어 있다", async ({ page }, listName: string) => {
+  const list = page.getByRole("list", { name: listName });
+  await expect(list).toBeVisible();
+  await expect(list.getByRole("listitem")).toHaveCount(0);
+});
+
 Then(
   "페이지를 새로고침해도 {string} 목록에 {string}가 표시된다",
   async ({ page }, listName: string, item: string) => {
@@ -46,5 +68,26 @@ Then(
     const list = page.getByRole("list", { name: listName });
     await expect(list).toBeVisible();
     await expect(list.getByRole("listitem").filter({ hasText: item })).toHaveCount(0);
+  },
+);
+
+// ── 오류 표시 ───────────────────────────────────────────
+// 오류 메시지는 role="alert" 요소에 표시한다.
+Then("{string} 오류가 표시된다", async ({ page }, message: string) => {
+  await expect(page.getByRole("alert")).toContainText(message);
+});
+
+// ── API 직접 요청 결과 ──────────────────────────────────
+// "권한 없음(403)으로" / "인증 필요(401)로" 처럼 조사가 달라 정규식을 쓴다.
+Then(
+  /^요청은 (.+)\((\d{3})\)(?:으로|로) 거부된다$/,
+  async ({ ctx }, _reason: string, status: string) => {
+    const res = ctx.lastResponse;
+    expect(res, "직전 Step에서 API 요청을 보내지 않았습니다").not.toBeNull();
+    expect(res!.status, `응답 본문: ${JSON.stringify(res!.body)}`).toBe(Number(status));
+    // 공통 에러 형식 { error: { code, message } }
+    expect(res!.body).toMatchObject({
+      error: { code: Number(status) === 401 ? "UNAUTHORIZED" : "FORBIDDEN" },
+    });
   },
 );
