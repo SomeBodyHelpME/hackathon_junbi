@@ -57,3 +57,19 @@ export function bookIdOf(title: string): string {
   if (!id) throw new Error(`시드에 없는 도서: ${title}`);
   return id;
 }
+
+export const loanKey = (userName: string, bookTitle: string) => `${userName}|${bookTitle}`;
+
+export function loanIdOf(ctx: ScenarioContext, userName: string, bookTitle: string): string {
+  const id = ctx.loans.get(loanKey(userName, bookTitle));
+  if (!id) throw new Error(`사전 조건에서 "${userName}"의 "${bookTitle}" 대여를 만들지 않았습니다`);
+  return id;
+}
+
+// 오늘(Asia/Seoul) + days → "YYYY-MM-DD". 서버의 반납 기한 계산과 같은 기준.
+const seoulDate = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul", dateStyle: "short" });
+
+export function seoulTodayPlus(days: number): string {
+  const [y, m, d] = seoulDate.format(new Date()).split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
