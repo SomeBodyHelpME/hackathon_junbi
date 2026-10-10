@@ -1,11 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import type { User } from "@kit/contracts";
 
 export function Header({ user, onLogout }: { user: User | null; onLogout: () => void }) {
   return (
     <header className="flex items-center justify-between border-b bg-white px-6 py-3">
-      <h1 className="text-xl font-bold">회의실 예약</h1>
+      <div className="flex items-center gap-6">
+        <h1 className="text-xl font-bold">회의실 예약</h1>
+        <nav className="flex gap-4 text-sm">
+          <Link href="/" className="hover:underline">
+            회의실
+          </Link>
+          <Link href="/reservations" className="hover:underline">
+            예약하기
+          </Link>
+        </nav>
+      </div>
       {user && (
         <div className="flex items-center gap-3">
           <span data-testid="current-user">{user.name}</span>

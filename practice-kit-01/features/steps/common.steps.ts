@@ -31,6 +31,8 @@ Then("로그인한 사용자로 {string}이 표시된다", async ({ page }, name
 // 목록은 aria-label로 찾는다 (예: <ul aria-label="내 예약">).
 // 화면은 데이터를 다 불러온 뒤에만 목록을 렌더링해야 한다.
 // 로딩 중에 빈 목록을 먼저 그리면 "표시되지 않는다" 검증이 잘못 통과할 수 있다.
+// 부정 검증 전 가드는 toBeAttached(DOM에 존재)로 한다.
+// 항목이 없는 <ul>은 높이가 0이라 Playwright 기준 visible이 아니기 때문이다.
 
 Then("{string} 목록에 {string}가 표시된다", async ({ page }, listName: string, item: string) => {
   const list = page.getByRole("list", { name: listName });
@@ -41,14 +43,14 @@ Then(
   "{string} 목록에 {string}가 표시되지 않는다",
   async ({ page }, listName: string, item: string) => {
     const list = page.getByRole("list", { name: listName });
-    await expect(list).toBeVisible();
+    await expect(list).toBeAttached();
     await expect(list.getByRole("listitem").filter({ hasText: item })).toHaveCount(0);
   },
 );
 
 Then("{string} 목록은 비어 있다", async ({ page }, listName: string) => {
   const list = page.getByRole("list", { name: listName });
-  await expect(list).toBeVisible();
+  await expect(list).toBeAttached();
   await expect(list.getByRole("listitem")).toHaveCount(0);
 });
 
@@ -66,15 +68,17 @@ Then(
   async ({ page }, listName: string, item: string) => {
     await page.reload();
     const list = page.getByRole("list", { name: listName });
-    await expect(list).toBeVisible();
+    await expect(list).toBeAttached();
     await expect(list.getByRole("listitem").filter({ hasText: item })).toHaveCount(0);
   },
 );
 
 // ── 오류 표시 ───────────────────────────────────────────
 // 오류 메시지는 role="alert" 요소에 표시한다.
+// Next.js가 페이지마다 넣는 route announcer(div#__next-route-announcer__)도 role="alert"라서
+// alert 전체가 아니라 해당 문구를 가진 alert를 찾는다.
 Then("{string} 오류가 표시된다", async ({ page }, message: string) => {
-  await expect(page.getByRole("alert")).toContainText(message);
+  await expect(page.getByRole("alert").filter({ hasText: message })).toBeVisible();
 });
 
 // ── API 직접 요청 결과 ──────────────────────────────────

@@ -32,3 +32,59 @@ export type Room = z.infer<typeof Room>;
 
 export const RoomListResponse = z.array(Room);
 export type RoomListResponse = z.infer<typeof RoomListResponse>;
+
+// ── 예약 ──────────────────────────────────────────────────
+export const TIME_SLOT_MINUTES = 30;
+
+export const RESERVATION_MESSAGES = {
+  titleRequired: "제목을 입력하세요",
+  titleTooLong: "제목은 100자 이하로 입력하세요",
+  roomRequired: "회의실을 선택하세요",
+  dateTimeRequired: "날짜와 시각을 선택하세요",
+  endAfterStart: "종료 시각은 시작 시각 이후여야 합니다",
+  slotUnit: "시각은 30분 단위로 선택하세요",
+} as const;
+
+const isoDateTime = z.iso.datetime({ offset: true, error: RESERVATION_MESSAGES.dateTimeRequired });
+
+function isOnSlot(iso: string): boolean {
+  const d = new Date(iso);
+  return d.getUTCSeconds() === 0 && d.getUTCMilliseconds() === 0 && d.getUTCMinutes() % TIME_SLOT_MINUTES === 0;
+}
+
+// FE/BE가 같은 규칙으로 검증한다. 백엔드 검증이 진짜 방어선이고, 프론트는 UX 보조.
+export const CreateReservationRequest = z
+  .object({
+    roomId: z.string({ error: RESERVATION_MESSAGES.roomRequired }).min(1, RESERVATION_MESSAGES.roomRequired),
+    title: z
+      .string({ error: RESERVATION_MESSAGES.titleRequired })
+      .trim()
+      .min(1, RESERVATION_MESSAGES.titleRequired)
+      .max(100, RESERVATION_MESSAGES.titleTooLong),
+    startAt: isoDateTime,
+    endAt: isoDateTime,
+  })
+  .refine((d) => new Date(d.endAt) > new Date(d.startAt), {
+    message: RESERVATION_MESSAGES.endAfterStart,
+    path: ["endAt"],
+  })
+  .refine((d) => isOnSlot(d.startAt) && isOnSlot(d.endAt), {
+    message: RESERVATION_MESSAGES.slotUnit,
+    path: ["startAt"],
+  });
+export type CreateReservationRequest = z.infer<typeof CreateReservationRequest>;
+
+export const Reservation = z.object({
+  id: z.string(),
+  roomId: z.string(),
+  roomName: z.string(),
+  userId: z.string(),
+  userName: z.string(),
+  title: z.string(),
+  startAt: z.string(),
+  endAt: z.string(),
+});
+export type Reservation = z.infer<typeof Reservation>;
+
+export const ReservationListResponse = z.array(Reservation);
+export type ReservationListResponse = z.infer<typeof ReservationListResponse>;
