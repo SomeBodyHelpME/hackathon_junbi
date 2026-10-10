@@ -1,3 +1,78 @@
+# 팀 일정 투표 서비스 (practice-kit-03)
+
+개설자가 후보 시간을 올리고 팀원이 가능한 시간을 고르면, 가장 많이 가능한 시간을 보여 주고 개설자가 하나로 확정하는 서비스 (요구사항: `docs/prd.md`, 작업 단위: `issues.md`).
+
+- 기술 스택: kit-01과 동일 (pnpm workspace · Next.js 3000 · Fastify 4000 · PostgreSQL + Drizzle · Zod · playwright-bdd · Vitest)
+- 최종 검증: commit `9f1460f`, 2026-10-10 22:09 KST, **모든 항목 PASS**
+
+## 실행 방법
+
+```bash
+corepack enable                          # PC당 1회 (Docker Desktop 실행 필요)
+pnpm install
+pnpm exec playwright install chromium    # 새 PC에서만
+docker compose up -d --wait
+pnpm db:migrate && pnpm db:seed
+pnpm dev                                 # http://localhost:3000
+
+# 검증 (pnpm dev는 끈 상태에서)
+pnpm lint && pnpm typecheck && pnpm test:unit
+pnpm test:int                            # 실제 DB 필요, 투표 데이터를 지움
+pnpm test:bdd
+
+# 결과 문서 재생성
+PLAYWRIGHT_JSON_OUTPUT_NAME=docs/test-logs/bdd-results.json pnpm test:bdd --reporter=list,json
+node scripts/e2e-report.mjs $(git rev-parse --short HEAD)
+
+docker compose down                      # 다음 키트로 넘어가기 전 (포트 3000/4000/5432 해제)
+```
+
+`Timed out waiting ... webServer` → DB 꺼짐(`docker compose ps`) · `reset 실패` → `pnpm dev` 종료 후 재실행
+
+## 최종 검증 결과
+
+commit `9f1460f` · 2026-10-10 22:09:21 ~ 22:09:41 KST · DB 볼륨 삭제 후 마이그레이션·시드부터 실행 · 로그 `docs/test-logs/`
+
+| 명령 | 결과 | 로그 |
+|---|---|---|
+| `pnpm lint` | PASS | `docs/test-logs/lint.log` |
+| `pnpm typecheck` | PASS | `docs/test-logs/typecheck.log` |
+| `pnpm test:unit` | PASS — 42 passed / 0 failed (contracts 21, api 21) | `docs/test-logs/test-unit.log` |
+| `pnpm test:int` | PASS — 15 passed / 0 failed | `docs/test-logs/test-int.log` |
+| `pnpm test:bdd` | PASS — 13 passed / 0 failed / 0 skipped / 0 flaky | `docs/test-logs/test-bdd.log`, `docs/e2e-test.md` |
+
+## 증거 인덱스 (REQ → BDD → Issue → 테스트 → 결과)
+
+| REQ | BDD (시나리오 / AC) | Issue | 단위·통합 테스트 | 결과 |
+|---|---|---|---|---|
+| REQ-00 환경·공통부 | `features/smoke.feature` (1) | `issues.md` [REQ-00] | `apps/api/src/app.test.ts` · `packages/contracts/src/index.test.ts` | BDD 1/1 PASS · unit PASS |
+| REQ-01 투표 생성 | `features/poll-create.feature` (3) / AC-01~03 | `issues.md` [REQ-01] | `packages/contracts/src/poll.test.ts` (후보 2~5개·중복·30분) · `apps/api/src/modules/poll/routes.test.ts` · `poll.int.test.ts` (DB 후보 중복 제약) | BDD 3/3 PASS · unit PASS · int PASS |
+| REQ-02 응답·집계 | `features/poll-respond.feature` (4) / AC-04~07 | `issues.md` [REQ-02] | `respond.int.test.ts` (대체, 최다 득표 동률, 다른 투표 후보 400, 복합 FK, 동시 10건 → 응답 1개·선택 합쳐짐 없음) | BDD 4/4 PASS · unit PASS · int PASS |
+| REQ-03 일정 확정(보안) | `features/poll-confirm.feature` (5) / AC-08~12 | `issues.md` [REQ-03] | `routes.test.ts` (확정 401·400·404) · `confirm.int.test.ts` (개설자 403, 409, 다른 투표 후보 400, DB FK·CHECK, 확정·응답 경쟁) · `docs/security-compliance.md` | BDD 5/5 PASS · unit PASS · int PASS |
+
+### 설계 결정 기록
+
+| 결정 | 이유 | 위치 |
+|---|---|---|
+| 응답 = `responses` 행 `ON CONFLICT DO UPDATE` 후 선택 교체 | 같은 사용자의 동시 제출을 행 잠금으로 줄 세워 응답 하나만 남김. 잠금 없는 `DO NOTHING`은 동시 10건에서 FAIL 확인 | `poll/repository.ts` `saveResponse` |
+| "이 투표의 후보" 규칙을 앱 + DB 복합 FK 두 겹으로 | 다른 투표의 후보 id를 끼워 넣는 공격(IDOR 변형) 차단. 앱 검증이 빠져도 DB가 거부 | `saveResponse`, `confirmPoll`, `drizzle/0001_confirm_same_poll.sql` |
+| 응답 시 투표 행 `FOR SHARE`, 확정은 `UPDATE … WHERE status='open'` | 확정 이후 응답 저장 방지, 재확정 409 | `poll/repository.ts` |
+| 확정 403(개설자) → 409(이미 확정) → 400(후보) 순서 | 권한을 상태·입력보다 먼저. 개설자 검사 제거 시 AC-09 FAIL 확인 | `poll/routes.ts` `/confirm` |
+
+### 리뷰 체크포인트 근거
+
+| 체크포인트 | 근거 |
+|---|---|
+| `.feature` 확정 이후 미변경 | `git diff dcf8b77 -- practice-kit-03/features/poll-*.feature` 0줄 |
+| 1인 1응답(upsert)·후보 중복 DB 제약 | `responses` PK, `candidates_poll_starts_unique` · int 테스트 |
+| 응답·확정의 후보가 그 투표의 후보인지 서버 검사 | `saveResponse`, `confirmPoll` + 복합 FK · BDD AC-11 |
+| 확정의 403/409가 API 핸들러에 있음 | `poll/routes.ts` `/confirm` |
+| `/api/test/reset` 운영 미등록 | unit "NODE_ENV=test가 아니면 라우트가 없다" |
+| 고정 대기 미사용 | `grep -rn waitForTimeout features/` 0건 |
+| Step 코드 수정 이력 | REQ-00에서 smoke Step(팀원 순서 무관 비교) 1건, 프롬프트 2 커밋 `90c80f3` 이후 변경 0 |
+
+---
+
 # 팀 일정 투표 모의 개발 키트 (kit-03)
 
 ## 파일 구성

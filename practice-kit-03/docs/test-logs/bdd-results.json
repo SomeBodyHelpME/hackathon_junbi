@@ -1,0 +1,909 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/24.1.0/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--reporter=list,json"
+    ],
+    "configFile": "playwright.config.ts",
+    "rootDir": ".features-gen",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "snapshotDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:3000",
+          "actionTimeout": 10000,
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "features/poll-confirm.feature.spec.js",
+      "file": "features/poll-confirm.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "일정 확정",
+          "file": "features/poll-confirm.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "개설자는 후보 하나로 일정을 확정할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-08"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1110,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 11
+                        },
+                        {
+                          "title": "And \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 572
+                        },
+                        {
+                          "title": "When \"2099-12-01 14:00\"으로 확정한다",
+                          "duration": 193
+                        },
+                        {
+                          "title": "Then 투표 상태가 \"확정\"으로 표시된다",
+                          "duration": 26
+                        },
+                        {
+                          "title": "And 확정된 시간으로 \"2099-12-01 14:00\"이 표시된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And 응답 양식이 표시되지 않는다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:35.045Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f1bd4490476ac01ff0d0-5783e7844b34f190e3c3",
+              "file": "features/poll-confirm.feature.spec.js",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "개설자가 아니면 확정할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-09",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 431,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"으로 로그인한다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "And \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 212
+                        },
+                        {
+                          "title": "Then 확정 버튼이 없다",
+                          "duration": 57
+                        },
+                        {
+                          "title": "When \"주간 회의 일정\" 투표를 \"2099-12-01 14:00\"으로 확정하도록 API로 직접 요청한다",
+                          "duration": 9
+                        },
+                        {
+                          "title": "Then 요청은 권한 없음(403)으로 거부된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And 투표 상태는 \"투표 중\"으로 유지된다",
+                          "duration": 6
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:36.410Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f1bd4490476ac01ff0d0-3515c040c327108a4bf1",
+              "file": "features/poll-confirm.feature.spec.js",
+              "line": 19,
+              "column": 3
+            },
+            {
+              "title": "확정된 투표에는 응답할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-10",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 146,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"주간 회의 일정\" 투표를 \"2099-12-01 14:00\"으로 확정해 두었다",
+                          "duration": 34
+                        },
+                        {
+                          "title": "And \"관응\"으로 로그인한다",
+                          "duration": 9
+                        },
+                        {
+                          "title": "When \"주간 회의 일정\" 투표에 \"2099-12-01 10:00\" 가능 응답을 API로 직접 요청한다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "Then 요청은 확정됨(409)으로 거부된다",
+                          "duration": 1
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:36.847Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f1bd4490476ac01ff0d0-3a39e902308eb591ec79",
+              "file": "features/poll-confirm.feature.spec.js",
+              "line": 28,
+              "column": 3
+            },
+            {
+              "title": "다른 투표의 후보로는 확정할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-11",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 158,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"점심 회식 일정\" 투표를 다음 후보로 만들어 두었다",
+                          "duration": 37
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "When \"주간 회의 일정\" 투표를 \"점심 회식 일정\"의 \"2099-12-03 12:00\" 후보로 확정하도록 API로 직접 요청한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "Then 요청은 잘못된 후보(400)로 거부된다",
+                          "duration": 1
+                        },
+                        {
+                          "title": "And 투표 상태는 \"투표 중\"으로 유지된다",
+                          "duration": 5
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:36.998Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f1bd4490476ac01ff0d0-747f6ad88d0586f3ade2",
+              "file": "features/poll-confirm.feature.spec.js",
+              "line": 35,
+              "column": 3
+            },
+            {
+              "title": "로그인하지 않으면 응답할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-12",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 84,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When 로그인하지 않은 상태로 \"주간 회의 일정\" 투표에 \"2099-12-01 10:00\" 가능 응답을 API로 직접 요청한다",
+                          "duration": 33
+                        },
+                        {
+                          "title": "Then 요청은 인증 필요(401)로 거부된다",
+                          "duration": 1
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:37.162Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "f1bd4490476ac01ff0d0-9f700398468ca81c8f03",
+              "file": "features/poll-confirm.feature.spec.js",
+              "line": 43,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/poll-create.feature.spec.js",
+      "file": "features/poll-create.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "팀 일정 투표 생성",
+          "file": "features/poll-create.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "후보 시간을 넣어 투표를 만들 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-01"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 688,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"주간 회의 일정\" 투표를 다음 후보로 만든다",
+                          "duration": 226
+                        },
+                        {
+                          "title": "Then \"투표\" 목록에 \"주간 회의 일정\"이 표시된다",
+                          "duration": 27
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:37.256Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d58443f7188e3068797-5366344619c0b32fd611",
+              "file": "features/poll-create.feature.spec.js",
+              "line": 11,
+              "column": 3
+            },
+            {
+              "title": "후보가 2개 미만이면 투표를 만들 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-02"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 401,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"주간 회의 일정\" 투표를 다음 후보로 만든다",
+                          "duration": 92
+                        },
+                        {
+                          "title": "Then \"후보는 2개 이상 5개 이하로 입력하세요\" 오류가 표시된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And \"투표\" 목록은 비어 있다",
+                          "duration": 30
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:37.949Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d58443f7188e3068797-2695b60e86d7cee676f3",
+              "file": "features/poll-create.feature.spec.js",
+              "line": 16,
+              "column": 3
+            },
+            {
+              "title": "후보 시간이 중복되면 투표를 만들 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-03"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 429,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"주간 회의 일정\" 투표를 다음 후보로 만든다",
+                          "duration": 158
+                        },
+                        {
+                          "title": "Then \"같은 후보 시간이 중복되었습니다\" 오류가 표시된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And \"투표\" 목록은 비어 있다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:38.356Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d58443f7188e3068797-31560005e42e9b40d29f",
+              "file": "features/poll-create.feature.spec.js",
+              "line": 22,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/poll-respond.feature.spec.js",
+      "file": "features/poll-respond.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "가능한 시간 응답 및 집계",
+          "file": "features/poll-respond.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "가능한 시간을 골라 응답하면 집계에 반영된다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-04"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 660,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "And \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 193
+                        },
+                        {
+                          "title": "When 다음 후보에 가능으로 응답한다",
+                          "duration": 150
+                        },
+                        {
+                          "title": "Then 집계에 다음과 같이 표시된다",
+                          "duration": 92
+                        },
+                        {
+                          "title": "And 페이지를 새로고침해도 집계에 \"2099-12-02 10:00\"의 가능 인원은 1명이다",
+                          "duration": 97
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:38.793Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "aa03fb95a355f92de487-e4b1e0ac14603c7441f0",
+              "file": "features/poll-respond.feature.spec.js",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "다시 응답하면 이전 응답이 바뀐다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-05"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 726,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"주간 회의 일정\" 투표에 다음 후보로 응답해 두었다",
+                          "duration": 39
+                        },
+                        {
+                          "title": "And \"관응\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "And \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 191
+                        },
+                        {
+                          "title": "When 다음 후보에 가능으로 응답한다",
+                          "duration": 153
+                        },
+                        {
+                          "title": "Then 집계에 다음과 같이 표시된다",
+                          "duration": 90
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:39.458Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "aa03fb95a355f92de487-9d344ce9f1282401fc2f",
+              "file": "features/poll-respond.feature.spec.js",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "가능 인원이 가장 많은 후보가 표시된다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-06"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 498,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given 다음 응답이 \"주간 회의 일정\" 투표에 들어와 있다",
+                          "duration": 131
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "When \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 197
+                        },
+                        {
+                          "title": "Then 최다 득표 후보로 다음이 표시된다",
+                          "duration": 54
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:40.189Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "aa03fb95a355f92de487-f5e1a2993b6d2bcd06f6",
+              "file": "features/poll-respond.feature.spec.js",
+              "line": 26,
+              "column": 3
+            },
+            {
+              "title": "아무 후보도 고르지 않으면 응답할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-07"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 434,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "And \"주간 회의 일정\" 투표 화면에 접속한다",
+                          "duration": 182
+                        },
+                        {
+                          "title": "When 아무 후보도 고르지 않고 응답한다",
+                          "duration": 96
+                        },
+                        {
+                          "title": "Then \"가능한 시간을 하나 이상 선택하세요\" 오류가 표시된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And 집계의 가능 인원은 모두 0명이다",
+                          "duration": 30
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:40.693Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "aa03fb95a355f92de487-f3912efaef987e72a41a",
+              "file": "features/poll-respond.feature.spec.js",
+              "line": 33,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/smoke.feature.spec.js",
+      "file": "features/smoke.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "개발 환경 동작 확인",
+          "file": "features/smoke.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "로그인한 사용자와 팀원 목록이 화면에 표시된다",
+              "ok": true,
+              "tags": [
+                "REQ-00",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 337,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "When 메인 화면에 접속한다",
+                          "duration": 171
+                        },
+                        {
+                          "title": "Then 로그인한 사용자로 \"상은\"이 표시된다",
+                          "duration": 50
+                        },
+                        {
+                          "title": "And 팀원 목록에 다음 팀원이 표시된다",
+                          "duration": 13
+                        }
+                      ],
+                      "startTime": "2026-10-10T13:09:41.135Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "61dea7e8757b4915e47a-485486d49f2b2855b30d",
+              "file": "features/smoke.feature.spec.js",
+              "line": 6,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T13:09:31.720Z",
+    "duration": 9847.287,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
