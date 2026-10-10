@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import { registerErrorHandlers } from "./common/errors.js";
 import { authRoutes } from "./modules/auth/routes.js";
 import { menuRoutes } from "./modules/menus/routes.js";
+import { orderRoutes } from "./modules/order/routes.js";
 import { testRoutes } from "./modules/test/routes.js";
 
 export const WEB_ORIGIN = process.env.WEB_ORIGIN ?? "http://localhost:3000";
@@ -23,6 +24,7 @@ export async function buildApp(opts: { logger?: boolean } = {}) {
 
   await app.register(authRoutes);
   await app.register(menuRoutes);
+  await app.register(orderRoutes);
 
   // 운영 환경에서는 라우트 자체를 등록하지 않는다 → 404.
   if (process.env.NODE_ENV === "test") {

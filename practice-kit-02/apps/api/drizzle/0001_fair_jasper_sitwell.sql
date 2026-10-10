@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "orders_round_user_unique" ON "orders" USING btree ("round_id","user_id");

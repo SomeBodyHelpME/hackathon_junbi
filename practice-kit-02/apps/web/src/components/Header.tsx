@@ -12,6 +12,9 @@ export function Header({ user, onLogout }: { user: User | null; onLogout: () => 
           <Link href="/" className="hover:underline">
             메뉴
           </Link>
+          <Link href="/rounds" className="hover:underline">
+            점심 모집
+          </Link>
         </nav>
       </div>
       {user && (
