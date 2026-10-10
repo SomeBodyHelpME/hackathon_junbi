@@ -86,3 +86,20 @@ export type Candidate = z.infer<typeof Candidate>;
 
 export const PollCreated = Poll.extend({ candidates: z.array(Candidate) });
 export type PollCreated = z.infer<typeof PollCreated>;
+
+// 응답: 가능한 후보 id 목록. 다시 제출하면 이전 응답을 대체한다.
+export const RespondRequest = z.object({
+  candidateIds: z
+    .array(z.uuid({ error: "후보 형식이 올바르지 않습니다" }), { error: POLL_MESSAGES.choiceRequired })
+    .min(1, POLL_MESSAGES.choiceRequired)
+    .max(5, "후보는 5개까지 선택할 수 있습니다"),
+});
+export type RespondRequest = z.infer<typeof RespondRequest>;
+
+export const PollDetail = Poll.extend({
+  candidates: z.array(Candidate.extend({ count: z.number() })),
+  // 가능 인원이 가장 많은 후보들 (동률이면 모두, 응답이 없으면 빈 배열)
+  topCandidateIds: z.array(z.string()),
+  myChoices: z.array(z.string()),
+});
+export type PollDetail = z.infer<typeof PollDetail>;

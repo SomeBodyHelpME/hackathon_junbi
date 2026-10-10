@@ -49,3 +49,16 @@ describe("POST /api/polls 입력 검증", () => {
     expect((await req("GET", "/api/polls/not-a-uuid")).statusCode).toBe(404);
   });
 });
+
+describe("PUT /api/polls/:id/response", () => {
+  it("비로그인은 401 (AC-12와 같은 원칙)", async () => {
+    const res = await req("PUT", `/api/polls/${pollId}/response`, { candidateIds: [] }, null);
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("빈 응답은 400 '가능한 시간을 하나 이상 선택하세요' (AC-07)", async () => {
+    const res = await req("PUT", `/api/polls/${pollId}/response`, { candidateIds: [] });
+    expect(res.statusCode).toBe(400);
+    expect(res.json()).toEqual({ error: { code: "VALIDATION_ERROR", message: M.choiceRequired } });
+  });
+});

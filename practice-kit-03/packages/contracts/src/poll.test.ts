@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CreatePollRequest, POLL_MESSAGES as M } from "./index";
+import { CreatePollRequest, POLL_MESSAGES as M, RespondRequest } from "./index";
 
 const at = (hhmm: string, date = "2099-12-01") => ({ startsAt: `${date}T${hhmm}:00+09:00` });
 const firstError = (input: unknown) => {
@@ -49,5 +49,18 @@ describe("CreatePollRequest", () => {
     expect(firstError({ title: "주간 회의", candidates: [{ startsAt: "2099-12-01 10:00" }, at("11:00")] })).toBe(
       M.candidateInvalid,
     );
+  });
+});
+
+describe("RespondRequest", () => {
+  const id = "11111111-1111-4111-8111-111111111111";
+  it("후보를 하나 이상 골라야 한다 (AC-07)", () => {
+    const r = RespondRequest.safeParse({ candidateIds: [] });
+    expect(r.success).toBe(false);
+    expect(r.error?.issues[0]?.message).toBe(M.choiceRequired);
+  });
+  it("UUID 형식의 후보 id만 받는다", () => {
+    expect(RespondRequest.safeParse({ candidateIds: [id] }).success).toBe(true);
+    expect(RespondRequest.safeParse({ candidateIds: ["c-1"] }).success).toBe(false);
   });
 });
