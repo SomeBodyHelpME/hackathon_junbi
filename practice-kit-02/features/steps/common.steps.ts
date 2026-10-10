@@ -26,3 +26,29 @@ When("메인 화면에 접속한다", async ({ page }) => {
 Then("로그인한 사용자로 {string}이 표시된다", async ({ page }, name: string) => {
   await expect(page.getByTestId("current-user")).toHaveText(name);
 });
+
+// ── 오류 표시 ───────────────────────────────────────────
+// Next.js route announcer도 role="alert"라서 해당 문구를 가진 alert를 찾는다.
+Then("{string} 오류가 표시된다", async ({ page }, message: string) => {
+  await expect(page.getByRole("alert").filter({ hasText: message })).toBeVisible();
+});
+
+// ── API 직접 요청 결과 ──────────────────────────────────
+const REJECT_CODES: Record<string, string> = {
+  "인증 필요": "UNAUTHORIZED",
+  "권한 없음": "FORBIDDEN",
+  마감됨: "ROUND_CLOSED",
+};
+
+// "권한 없음(403)으로" / "인증 필요(401)로" 처럼 조사가 달라 정규식을 쓴다.
+Then(
+  /^요청은 (.+)\((\d{3})\)(?:으로|로) 거부된다$/,
+  async ({ ctx }, reason: string, status: string) => {
+    const res = ctx.lastResponse;
+    expect(res, "직전 Step에서 API 요청을 보내지 않았습니다").not.toBeNull();
+    expect(res!.status, `응답 본문: ${JSON.stringify(res!.body)}`).toBe(Number(status));
+    const code = REJECT_CODES[reason];
+    expect(code, `알 수 없는 거부 사유: ${reason}`).toBeDefined();
+    expect(res!.body).toMatchObject({ error: { code } });
+  },
+);
