@@ -2,14 +2,18 @@
 
 import { useEffect, useState } from "react";
 import type { MenuListResponse, RoundDetail } from "@kit/contracts";
+import { useUser } from "@/components/AppShell";
 import { apiFetch } from "@/lib/api";
 import { formatWon } from "@/lib/format";
 import { OrderForm } from "./OrderForm";
 import { STATUS_LABEL } from "./status";
+import { SummaryTable } from "./SummaryTable";
 
 type Loaded = { token: number; round: RoundDetail; menus: MenuListResponse };
 
 export function RoundDetailPage({ roundId }: { roundId: string }) {
+  const user = useUser();
+  const [closing, setClosing] = useState(false);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +34,21 @@ export function RoundDetailPage({ roundId }: { roundId: string }) {
 
   const { round, menus } = loaded;
   const isOpen = round.status === "open";
+  // 버튼 노출은 UX일 뿐이다. 개설자 검사는 API(POST /api/rounds/:id/close)가 한다.
+  const canClose = isOpen && round.createdBy === user.id;
+
+  async function closeRound() {
+    setClosing(true);
+    setError(null);
+    try {
+      await apiFetch<void>(`/api/rounds/${roundId}/close`, { method: "POST" });
+      reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "마감하지 못했습니다");
+    } finally {
+      setClosing(false);
+    }
+  }
 
   return (
     <>
@@ -41,10 +60,27 @@ export function RoundDetailPage({ roundId }: { roundId: string }) {
               {round.date} · 개설 {round.createdByName}
             </p>
           </div>
-          <span data-testid="round-status" className="rounded bg-gray-100 px-3 py-1 text-sm">
-            {STATUS_LABEL[round.status]}
-          </span>
+          <div className="flex items-center gap-3">
+            <span data-testid="round-status" className="rounded bg-gray-100 px-3 py-1 text-sm">
+              {STATUS_LABEL[round.status]}
+            </span>
+            {canClose && (
+              <button
+                type="button"
+                onClick={closeRound}
+                disabled={closing}
+                className="rounded bg-gray-800 px-3 py-1 text-sm text-white hover:bg-gray-900 disabled:opacity-50"
+              >
+                마감하기
+              </button>
+            )}
+          </div>
         </div>
+        {error && (
+          <p role="alert" className="mt-3 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </p>
+        )}
       </section>
 
       {isOpen && <OrderForm roundId={round.id} menus={menus} onOrdered={reload} />}
@@ -68,6 +104,8 @@ export function RoundDetailPage({ roundId }: { roundId: string }) {
         </ul>
         {round.orders.length === 0 && <p className="text-sm text-gray-500">아직 주문이 없습니다.</p>}
       </section>
+
+      <SummaryTable summary={round.summary} />
     </>
   );
 }

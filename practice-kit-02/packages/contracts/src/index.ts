@@ -103,7 +103,17 @@ export const Order = z.object({
 });
 export type Order = z.infer<typeof Order>;
 
+// 취합표: 메뉴별 수량·금액(주문이 있는 메뉴만)과 총액. 금액은 서버가 DB 가격으로 계산한다.
+export const RoundSummary = z.object({
+  items: z.array(
+    z.object({ menuId: z.string(), menuName: z.string(), quantity: z.number(), amount: z.number() }),
+  ),
+  total: z.number(),
+});
+export type RoundSummary = z.infer<typeof RoundSummary>;
+
 export const RoundDetail = Round.extend({
   orders: z.array(Order),
+  summary: RoundSummary,
 });
 export type RoundDetail = z.infer<typeof RoundDetail>;

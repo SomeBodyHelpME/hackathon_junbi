@@ -56,3 +56,15 @@ describe("POST /api/rounds/:id/orders 입력 검증", () => {
     expect(res.statusCode).toBe(404);
   });
 });
+
+describe("POST /api/rounds/:id/close", () => {
+  it("비로그인은 401", async () => {
+    const res = await req("POST", `/api/rounds/${roundId}/close`, undefined, null);
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("모집 id가 UUID가 아니면 404", async () => {
+    const res = await req("POST", "/api/rounds/not-a-uuid/close");
+    expect(res.statusCode).toBe(404);
+  });
+});
