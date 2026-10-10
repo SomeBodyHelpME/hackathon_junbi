@@ -1,3 +1,95 @@
+# 회의실 예약 서비스 (practice-kit-01)
+
+사내 회의실 예약·조회·취소 웹 서비스. BDD → AI 구현 → E2E 검증 사이클 연습용 (요구사항: `docs/prd.md`, 작업 단위: `issues.md`).
+
+- 기술 스택: pnpm workspace · Next.js(3000) · Fastify(4000) · PostgreSQL + Drizzle · Zod(contracts) · playwright-bdd · Vitest
+- 최종 검증: commit `e8faa19`, 2026-10-10 20:23 KST, **모든 항목 PASS** (아래 표)
+
+## 실행 방법
+
+```bash
+# 0) 사전 준비 (PC당 1회): Docker Desktop 실행
+corepack enable
+
+# 1) 설치
+pnpm install
+pnpm exec playwright install chromium   # 새 PC에서만
+
+# 2) DB 기동 → 테이블·시드
+docker compose up -d --wait
+pnpm db:migrate && pnpm db:seed
+
+# 3) 개발 서버 (http://localhost:3000)
+pnpm dev
+
+# 4) 검증 (pnpm dev는 꺼 둔 상태에서)
+pnpm lint
+pnpm typecheck
+pnpm test:unit     # DB 없이 실행
+pnpm test:int      # 실제 DB 필요, 예약 데이터를 지움
+pnpm test:bdd      # API(NODE_ENV=test)·Web 서버를 자동 기동
+
+# 결과 문서 재생성
+pnpm test:bdd --reporter=list,json   # PLAYWRIGHT_JSON_OUTPUT_NAME=docs/test-logs/bdd-results.json
+node scripts/e2e-report.mjs $(git rev-parse --short HEAD)
+
+# 정리
+docker compose down      # 데이터 유지
+docker compose down -v   # 데이터 삭제
+```
+
+| 문제 | 원인 · 조치 |
+|---|---|
+| `Timed out waiting ... from config.webServer` | DB가 꺼져 있음 → `docker compose ps` 확인 후 2) 실행 |
+| Before hook `reset 실패` | `pnpm dev`(개발 모드 API)가 4000번을 점유 → 종료 후 재실행 |
+| 포트 사용 중 | 다른 키트의 서버/DB가 떠 있음 → 해당 키트에서 `docker compose down` |
+
+## 최종 검증 결과
+
+- commit `e8faa19` · 실행 2026-10-10 20:23:36 ~ 20:23:56 KST · DB 볼륨 삭제 후 마이그레이션·시드부터 실행
+- 로그: `docs/test-logs/`
+
+| 명령 | 결과 | 로그 |
+|---|---|---|
+| `pnpm lint` | PASS (오류 0) | `docs/test-logs/lint.log` |
+| `pnpm typecheck` | PASS (오류 0) | `docs/test-logs/typecheck.log` |
+| `pnpm test:unit` | PASS — 54 passed / 0 failed (contracts 21, api 33) | `docs/test-logs/test-unit.log` |
+| `pnpm test:int` | PASS — 19 passed / 0 failed | `docs/test-logs/test-int.log` |
+| `pnpm test:bdd` | PASS — 11 passed / 0 failed / 0 skipped / 0 flaky | `docs/test-logs/test-bdd.log`, `docs/e2e-test.md` |
+
+## 증거 인덱스 (REQ → BDD → Issue → 테스트 → 결과)
+
+| REQ | BDD (시나리오 / AC) | Issue | 단위·통합 테스트 | 결과 |
+|---|---|---|---|---|
+| REQ-00 환경·공통부 | `features/smoke.feature` (1) | `issues.md` [REQ-00] | `apps/api/src/app.test.ts` (에러 형식, 인증, reset 등록 조건, CORS) · `packages/contracts/src/index.test.ts` | BDD 1/1 PASS · unit PASS |
+| REQ-01 예약 생성·조회 | `features/reservation-create.feature` (3) / AC-01~04 | `issues.md` [REQ-01] | `packages/contracts/src/reservation.test.ts` (스키마 14) · `apps/api/src/modules/reservation/routes.test.ts` (백엔드 입력 검증) | BDD 3/3 PASS · unit PASS |
+| REQ-02 중복 차단 | `features/reservation-conflict.feature` (3) / AC-05~07 | `issues.md` [REQ-02] | `apps/api/src/modules/reservation/overlap.test.ts` (겹침 11사례) · `conflict.int.test.ts` (DB 제약=공식, 동시 10건 → 1건 성공) | BDD 3/3 PASS · unit PASS · int PASS |
+| REQ-03 예약 취소(보안) | `features/reservation-cancel.feature` (4) / AC-08~11 | `issues.md` [REQ-03] | `routes.test.ts` (DELETE 401·404) · `cancel.int.test.ts` (본인 204, 타인 403, 위조 쿠키 401, 날짜 경계) · `docs/security-compliance.md` | BDD 4/4 PASS · unit PASS · int PASS |
+
+시나리오별 결과·실행 시각·SHA: `docs/e2e-test.md` · 보안 항목별 검증: `docs/security-compliance.md`
+
+### 설계 결정 기록
+
+| 결정 | 이유 | 위치 |
+|---|---|---|
+| 겹침 차단 = PostgreSQL exclusion constraint + 회의실별 advisory lock | 조회 후 저장은 동시 요청에 뚫림(실험: 10건 모두 성공). 제약만 쓰면 deadlock → 500. 잠금으로 줄 세우고 제약은 안전망 | `apps/api/drizzle/0001_no_overlap.sql`, `reservation/repository.ts` |
+| 권한 검사는 API 핸들러에서 | 화면 버튼 숨김(AC-09)만으로는 IDOR 방어 불가(실험: 검사 제거 시 AC-10 FAIL) | `reservation/routes.ts` `app.delete` |
+| 취소 = 행 삭제(hard delete) | 소프트 삭제 시 취소된 예약도 겹침 제약에 걸림 | `repository.ts` `deleteOwned` |
+| `/api/test/reset`은 `NODE_ENV=test`에서만 등록 | 운영에서 인증 없는 전체 삭제 API 노출 방지 | `apps/api/src/app.ts` |
+
+### 리뷰 체크포인트 근거 (아래 키트 체크리스트를 사람이 확인할 때 참고)
+
+| 체크포인트 | 근거 |
+|---|---|
+| `.feature` 파일 미변경 | 키트 첫 커밋(`1c45dfe`) 이후 `git diff 1c45dfe -- 'practice-kit-01/features/reservation-*.feature'` 0줄 |
+| 겹침 경계 허용 | `overlap.cases.ts` "끝에 맞닿음 (AC-06)" · BDD AC-06 PASS |
+| 403 검사가 API 핸들러에 있음 | `apps/api/src/modules/reservation/routes.ts` `owner.userId !== req.userId` |
+| `/api/test/reset` 운영 미등록 | `app.test.ts` "NODE_ENV=test가 아니면 라우트가 없다" PASS |
+| 고정 대기 미사용 | `grep -rn waitForTimeout features/` 결과 0건 |
+| Step 코드 수정 이력 | REQ-01 구현 중 2건 (alert 필터, 목록 가드 `toBeAttached`) — 커밋 `929b4dd` |
+
+---
+
 # 회의실 예약 모의 개발 키트 (상은)
 
 ## 파일 구성

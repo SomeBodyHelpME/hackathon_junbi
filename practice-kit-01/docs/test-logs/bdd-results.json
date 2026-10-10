@@ -1,0 +1,778 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node/24.1.0/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--reporter=list,json"
+    ],
+    "configFile": "playwright.config.ts",
+    "rootDir": ".features-gen",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": ".features-gen",
+        "snapshotDir": ".features-gen",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://localhost:3000",
+          "actionTimeout": 10000,
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "features/reservation-cancel.feature.spec.js",
+      "file": "features/reservation-cancel.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "예약 취소",
+          "file": "features/reservation-cancel.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "본인 예약을 취소할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-08"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1043,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"이 \"한라\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 \"취소할 회의\"로 예약해 두었다",
+                          "duration": 73
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 7
+                        },
+                        {
+                          "title": "And 예약 화면에 접속한다",
+                          "duration": 296
+                        },
+                        {
+                          "title": "When \"내 예약\" 목록에서 \"취소할 회의\"를 취소한다",
+                          "duration": 163
+                        },
+                        {
+                          "title": "Then \"내 예약\" 목록에 \"취소할 회의\"가 표시되지 않는다",
+                          "duration": 8
+                        },
+                        {
+                          "title": "And 페이지를 새로고침해도 \"내 예약\" 목록에 \"취소할 회의\"가 표시되지 않는다",
+                          "duration": 105
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:50.310Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9494c8a670576e069a2e-2082933793a9ce400b5f",
+              "file": "features/reservation-cancel.feature.spec.js",
+              "line": 6,
+              "column": 3
+            },
+            {
+              "title": "다른 사용자의 예약에는 취소 버튼이 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-09"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1220,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"한라\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 \"관응 회의\"로 예약해 두었다",
+                          "duration": 51
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 7
+                        },
+                        {
+                          "title": "When \"한라\" 회의실의 \"2099-12-01\" 예약 현황을 조회한다",
+                          "duration": 1059
+                        },
+                        {
+                          "title": "Then \"관응 회의\" 예약이 표시된다",
+                          "duration": 6
+                        },
+                        {
+                          "title": "And \"관응 회의\" 예약에는 취소 버튼이 없다",
+                          "duration": 5
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:51.607Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9494c8a670576e069a2e-b0a173bbd54e60f48bf8",
+              "file": "features/reservation-cancel.feature.spec.js",
+              "line": 15,
+              "column": 3
+            },
+            {
+              "title": "다른 사용자의 예약을 API로 직접 취소할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-10",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 134,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"관응\"이 \"한라\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 \"관응 회의\"로 예약해 두었다",
+                          "duration": 45
+                        },
+                        {
+                          "title": "And \"상은\"으로 로그인한다",
+                          "duration": 5
+                        },
+                        {
+                          "title": "When \"관응 회의\" 예약의 취소를 API로 직접 요청한다",
+                          "duration": 4
+                        },
+                        {
+                          "title": "Then 요청은 권한 없음(403)으로 거부된다",
+                          "duration": 1
+                        },
+                        {
+                          "title": "And \"관응 회의\" 예약은 그대로 유지된다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:52.833Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9494c8a670576e069a2e-6a322f0b5a562e27652a",
+              "file": "features/reservation-cancel.feature.spec.js",
+              "line": 23,
+              "column": 3
+            },
+            {
+              "title": "로그인하지 않으면 예약을 생성할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-03",
+                "AC-11",
+                "security"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 212,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When 로그인하지 않은 상태로 예약 생성을 API로 직접 요청한다",
+                          "duration": 202
+                        },
+                        {
+                          "title": "Then 요청은 인증 필요(401)로 거부된다",
+                          "duration": 2
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:52.973Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "9494c8a670576e069a2e-7acff05de312a65513fd",
+              "file": "features/reservation-cancel.feature.spec.js",
+              "line": 31,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/reservation-conflict.feature.spec.js",
+      "file": "features/reservation-conflict.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "중복 예약 차단",
+          "file": "features/reservation-conflict.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "시간이 겹치는 예약은 생성할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-05"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 508,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"한라\" 회의실을 \"2099-12-01\" \"10:30\"부터 \"11:30\"까지 \"겹치는 회의\"로 예약한다",
+                          "duration": 110
+                        },
+                        {
+                          "title": "Then \"이미 예약된 시간입니다\" 오류가 표시된다",
+                          "duration": 31
+                        },
+                        {
+                          "title": "And \"내 예약\" 목록은 비어 있다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:53.201Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce169c505fc21a170ef1-40085529c177259717e9",
+              "file": "features/reservation-conflict.feature.spec.js",
+              "line": 12,
+              "column": 3
+            },
+            {
+              "title": "끝나는 시각에 맞닿는 예약은 생성할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-06"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 488,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"한라\" 회의실을 \"2099-12-01\" \"11:00\"부터 \"12:00\"까지 \"이어지는 회의\"로 예약한다",
+                          "duration": 114
+                        },
+                        {
+                          "title": "Then \"내 예약\" 목록에 \"이어지는 회의\"가 표시된다",
+                          "duration": 81
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:53.717Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce169c505fc21a170ef1-a8f3231dee380e6cd9f4",
+              "file": "features/reservation-conflict.feature.spec.js",
+              "line": 18,
+              "column": 3
+            },
+            {
+              "title": "다른 회의실은 같은 시간에도 예약할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-02",
+                "AC-07"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 482,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "When \"백두\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 \"다른 방 회의\"로 예약한다",
+                          "duration": 106
+                        },
+                        {
+                          "title": "Then \"내 예약\" 목록에 \"다른 방 회의\"가 표시된다",
+                          "duration": 83
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:54.211Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ce169c505fc21a170ef1-68269dcc230aaafb2ee7",
+              "file": "features/reservation-conflict.feature.spec.js",
+              "line": 23,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/reservation-create.feature.spec.js",
+      "file": "features/reservation-create.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "회의실 예약 생성 및 조회",
+          "file": "features/reservation-create.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "회의실을 예약하고 새로고침 후에도 조회할 수 있다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-01",
+                "AC-02"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 530,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given 예약 화면에 접속한다",
+                          "duration": 180
+                        },
+                        {
+                          "title": "When \"한라\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 \"주간 회의\"로 예약한다",
+                          "duration": 115
+                        },
+                        {
+                          "title": "Then \"내 예약\" 목록에 \"주간 회의\"가 표시된다",
+                          "duration": 80
+                        },
+                        {
+                          "title": "And 페이지를 새로고침해도 \"내 예약\" 목록에 \"주간 회의\"가 표시된다",
+                          "duration": 78
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:54.710Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b11f69592ba61f300ad-f92ef8e8f88289dab9f7",
+              "file": "features/reservation-create.feature.spec.js",
+              "line": 10,
+              "column": 3
+            },
+            {
+              "title": "제목 없이 예약할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-03"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 379,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given 예약 화면에 접속한다",
+                          "duration": 181
+                        },
+                        {
+                          "title": "When \"한라\" 회의실을 \"2099-12-01\" \"10:00\"부터 \"11:00\"까지 제목 없이 예약한다",
+                          "duration": 95
+                        },
+                        {
+                          "title": "Then \"제목을 입력하세요\" 오류가 표시된다",
+                          "duration": 3
+                        },
+                        {
+                          "title": "And \"내 예약\" 목록은 비어 있다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:55.244Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b11f69592ba61f300ad-1699e5f867abf9e7beb8",
+              "file": "features/reservation-create.feature.spec.js",
+              "line": 17,
+              "column": 3
+            },
+            {
+              "title": "종료 시각이 시작 시각보다 빠르면 예약할 수 없다",
+              "ok": true,
+              "tags": [
+                "REQ-01",
+                "AC-04"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 530,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given 예약 화면에 접속한다",
+                          "duration": 185
+                        },
+                        {
+                          "title": "When \"한라\" 회의실을 \"2099-12-01\" \"11:00\"부터 \"10:00\"까지 \"잘못된 예약\"으로 예약한다",
+                          "duration": 108
+                        },
+                        {
+                          "title": "Then \"종료 시각은 시작 시각 이후여야 합니다\" 오류가 표시된다",
+                          "duration": 2
+                        },
+                        {
+                          "title": "And \"내 예약\" 목록은 비어 있다",
+                          "duration": 4
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:55.628Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "1b11f69592ba61f300ad-5ad77ab0189191397374",
+              "file": "features/reservation-create.feature.spec.js",
+              "line": 24,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "features/smoke.feature.spec.js",
+      "file": "features/smoke.feature.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "개발 환경 동작 확인",
+          "file": "features/smoke.feature.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "로그인한 사용자와 회의실 목록이 화면에 표시된다",
+              "ok": true,
+              "tags": [
+                "REQ-00",
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 334,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Given \"상은\"으로 로그인한다",
+                          "duration": 7
+                        },
+                        {
+                          "title": "When 메인 화면에 접속한다",
+                          "duration": 176
+                        },
+                        {
+                          "title": "Then 로그인한 사용자로 \"상은\"이 표시된다",
+                          "duration": 54
+                        },
+                        {
+                          "title": "And 회의실 목록에 다음 회의실이 표시된다",
+                          "duration": 9
+                        }
+                      ],
+                      "startTime": "2026-10-10T11:23:56.167Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "61dea7e8757b4915e47a-7ec19aa9bb32ff8ef481",
+              "file": "features/smoke.feature.spec.js",
+              "line": 6,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-10T11:23:47.043Z",
+    "duration": 9542.112000000001,
+    "expected": 11,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
